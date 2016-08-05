@@ -40,29 +40,29 @@ stage 'Stability Check'
 
 if(mavenSuccess) {
   // Notify on Slack
-  //slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+  slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
   node {
     // Push version to crashlytics
-    //build 'Publish Beta apk'
+    //build job: 'Publish Beta apk', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
   }
 
   currentBuild.result = 'SUCCESS'
 } else {
   // Notify on Slack
-  //slackSend channel: '#android-testing', color: 'danger', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+  slackSend channel: '#android-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
   timeout(time:2, unit:'DAYS') {
     inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
   }
 
 stage 'Fabric'
   if(inputVal) {
-    //slackSend channel: '#android-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+    slackSend channel: '#android-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
     node {
-      //build 'Publish Beta apk'
+      //build job: 'Publish Beta apk', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
     }
     currentBuild.result = 'SUCCESS'
   } else {
-    //slackSend channel: '#android-testing', color: 'danger', message: 'QA.QC decided to not override.  Build failed.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+    slackSend channel: '#android-testing', color: 'danger', message: 'QA/QC decided to not override.  Build failed.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
     currentBuild.result = 'FAILED'
   }
 }
