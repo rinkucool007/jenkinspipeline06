@@ -33,7 +33,7 @@ stage 'Stability Check'
 
 if(mavenSuccess) {
   // Notify on Slack
-  slackSend channel: '#ios-testing', color: 'good', message: 'Appium tests passed. Pushing beta to Fabric', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+  //slackSend channel: '#ios-testing', color: 'good', message: 'Appium tests passed. Pushing beta to Fabric', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
   node {
     // Push version to crashlytics
     //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'iOS Beta Release')]
@@ -42,20 +42,20 @@ if(mavenSuccess) {
   currentBuild.result = 'SUCCESS'
 } else {
   // Notify on Slack
-  slackSend channel: '#ios-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+  //slackSend channel: '#ios-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
   timeout(time:2, unit:'DAYS') {
     inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
   }
 
 stage 'Fabric'
   if(inputVal) {
-    slackSend channel: '#ios-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+    //slackSend channel: '#ios-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
     node {
       //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'iOS Beta Release')]
     }
     currentBuild.result = 'SUCCESS'
   } else {
-    slackSend channel: '#ios-testing', color: 'danger', message: 'QA/QC decided to not override.  Build failed.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+    //slackSend channel: '#ios-testing', color: 'danger', message: 'QA/QC decided to not override.  Build failed.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
     currentBuild.result = 'FAILED'
   }
 }
