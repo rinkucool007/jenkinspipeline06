@@ -43,7 +43,7 @@ if(mavenSuccess) {
   slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
   node {
     // Push version to crashlytics
-    //build job: 'Publish Beta apk', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
+    //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
   }
 
   currentBuild.result = 'SUCCESS'
@@ -58,7 +58,7 @@ stage 'Fabric'
   if(inputVal) {
     slackSend channel: '#android-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
     node {
-      //build job: 'Publish Beta apk', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
+      //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
     }
     currentBuild.result = 'SUCCESS'
   } else {
