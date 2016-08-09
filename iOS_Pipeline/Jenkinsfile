@@ -32,7 +32,7 @@ node {
 stage 'Stability Check'
 
 if(mavenSuccess) {
-  stage 'Jenkins'
+  stage 'Fabric'
   // Notify on Slack
   //slackSend channel: '#ios-testing', color: 'good', message: 'Appium tests passed. Pushing beta to Fabric', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
   node {
