@@ -16,7 +16,7 @@ node {
 }
 
 stage 'Appium Tests'
-// Default the success to true
+
 mavenSuccess = true
 node {
   step([$class: 'CopyArtifact', filter: '**/*.apk', fingerprintArtifacts: true, projectName: 'Build Android apk', selector: [$class: 'StatusBuildSelector', stable: false]])
@@ -34,21 +34,17 @@ node {
   step([$class: 'Publisher'])
 }
 
-
-
 stage 'Stability Check'
 
 if(mavenSuccess) {
-  // Notify on Slack
+  stage 'Fabric'
   //slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
   node {
-    // Push version to crashlytics
     //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
   }
 
   currentBuild.result = 'SUCCESS'
 } else {
-  // Notify on Slack
   //slackSend channel: '#android-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
   timeout(time:2, unit:'DAYS') {
     inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
