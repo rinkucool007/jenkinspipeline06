@@ -38,7 +38,7 @@ input message: 'Check route_comparison.csv for regression/check issues', ok: 'Ac
 stage 'Generate Jenkins Test Result csv and Deploy on Sandbox'
 parallel(
   // Generate a Jenkins-readable csv
-  phase1: {}
+  phase1: {},
 
   // Deploy the Navigator code on Sandbox
   phase2: {}
