@@ -1,6 +1,6 @@
 #!groovy
 
-def workspace = "~/Users/Shared/Jenkins/Home/jobs/Navigator\ Pipeline/workspace"
+def workspace = "~/Users/Shared/Jenkins/Home/jobs/Navigator\\ Pipeline/workspace"
 
 // Pull the scripts from ops-script repo
 stage 'Script Checkout'
