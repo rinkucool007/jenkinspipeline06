@@ -1,5 +1,7 @@
 #!groovy
 
+def workspace = "~/Users/Shared/Jenkins/Home/jobs/Navigator\ Pipeline/workspace"
+
 // Pull the scripts from ops-script repo
 stage 'Script Checkout'
 node {
@@ -9,7 +11,7 @@ node {
 // Run save_response.py and save results.csv
 stage 'Save_Response Script'
 node {
-  sh 'python $WORKSPACE/compare_navigator_response/save_response.py'
+  sh 'python $workspace/compare_navigator_response/save_response.py'
 }
 
 // Pull the navigator update
