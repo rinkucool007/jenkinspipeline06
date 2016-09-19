@@ -11,7 +11,7 @@ node {
 // Run save_response.py and save results.csv
 stage 'Save_Response Script'
 node {
-  dir('ops_scripts/copmare_navigator_response') {
+  dir('ops_scripts/compare_navigator_response') {
     sh 'python save_response.py'
   }
 }
