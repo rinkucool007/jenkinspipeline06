@@ -3,19 +3,25 @@
 // Pull the scripts from ops-script repo
 stage 'Script Checkout'
 node {
-  git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/ops-scripts.git'
+  dir('ops_scripts') {
+    git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/ops-scripts.git'
+  }
 }
 
 // Run save_response.py and save results.csv
 stage 'Save_Response Script'
 node {
-  //sh 'python compare_navigator_response/save_response.py'
+  dir('ops_scripts/copmare_navigator_response') {
+    sh 'python save_response.py'
+  }
 }
 
 // Pull the navigator update
 stage 'Navigator Checkout'
 node {
-  git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/navigator.git'
+  dir('navigator_files') {
+    git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/navigator.git'
+  }
 }
 
 // Deploy the navigator update
@@ -27,7 +33,9 @@ node {
 // Run compare_response.py and save results csv
 stage 'Compare_Response Script'
 node {
-  //sh 'python compare_navigator_response/compare_response.py'
+  dir('ops_scripts/compare_navigator_response') {
+    script 'python compare_response.py'
+  }
 }
 
 // Wait for manual check of results csv (for regression/check issues)
