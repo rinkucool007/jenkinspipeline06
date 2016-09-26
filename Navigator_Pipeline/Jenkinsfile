@@ -40,10 +40,11 @@ node {
 
 // Wait for manual check of results csv (for regression/check issues)
 stage 'Stability Check'
-input message: 'Check route_comparison.csv for regression/check issues', ok: 'Accept changes'
 node {
   slackSend channel: '#navigator', color: 'good', message: 'Compare_response.py successfully completed. Waiting on engineer to check and approve route_comparison.csv', teamDomain: 'metropia', token: 'G051i0CE8ZtJJUUfH9ntuxta'
 }
+input message: 'Check route_comparison.csv for regression/check issues', ok: 'Accept changes'
+
 
 // Parallel stage
 stage 'Generate Jenkins Test Result csv and Deploy on Sandbox'
