@@ -37,6 +37,7 @@ stage 'Compare_Response Script'
 node {
   dir('ops_scripts/compare_navigator_response') {
     sh 'python compare_response.py'
+    archiveArtifacts 'route_comparison.csv'
   }
 }
 
