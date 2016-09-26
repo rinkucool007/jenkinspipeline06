@@ -44,7 +44,7 @@ node {
 // Wait for manual check of results csv (for regression/check issues)
 stage 'Stability Check'
 node {
-  slackSend channel: '#navigator', color: 'good', message: 'Compare_response.py successfully completed. Waiting on engineer to check and approve route_comparison.csv', teamDomain: 'metropia', token: 'G051i0CE8ZtJJUUfH9ntuxta'
+  slackSend channel: '#navigator', color: 'good', message: 'Compare_response.py successfully completed. Waiting on engineer to check and approve route_comparison.csv. See https://jenkins.metropia.com/job/Navigator%20Pipeline/ for more details.', teamDomain: 'metropia', token: 'G051i0CE8ZtJJUUfH9ntuxta'
 }
 input message: 'Check route_comparison.csv for regression/check issues', ok: 'Accept changes'
 
