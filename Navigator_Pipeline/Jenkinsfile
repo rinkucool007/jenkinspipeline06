@@ -27,7 +27,9 @@ node {
 // Deploy the navigator update
 stage 'Navigator Deployment'
 node {
-  sh 'scp -i ~/.ssh/Jenkins.pem __init__.py dbf.py earth.py geometry.py navigation.py restart-all.sh restart.sh signs.py titlecase.py ubuntu@52.11.192.135:~/'
+  dir('navigator_files') {
+    sh 'scp -i ~/.ssh/Jenkins.pem __init__.py dbf.py earth.py geometry.py navigation.py restart-all.sh restart.sh signs.py titlecase.py ubuntu@52.11.192.135:~/'
+  }
 }
 
 // Run compare_response.py and save results csv
