@@ -3,6 +3,7 @@
 // Pull the scripts from ops-script repo
 stage 'Script Checkout'
 node {
+  slackSend channel: '#navigator', color: 'good', message: 'Navigator deployment pipeline started.', teamDomain: 'metropia', token: 'G051i0CE8ZtJJUUfH9ntuxta'
   dir('ops_scripts') {
     git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/ops-scripts.git'
   }
