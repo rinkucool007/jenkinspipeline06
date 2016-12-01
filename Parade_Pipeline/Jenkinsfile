@@ -11,7 +11,7 @@ echo ("Number of Tests: "+userInput['testCount'])
 echo ("Number of concurrent calls: "+userInput['concurrentCount'])
 
 // Range check on testCount
-if(userInput['testCount'].compareTo(0)<0 || userInput['testCount'].compareTo(40)>0) {
+if(userInput['testCount'].compareTo("0")<0 || userInput['testCount'].compareTo("40")>0) {
   echo "Test count was outside of range"
   currentBuild.result = 'FAILURE'
 }
