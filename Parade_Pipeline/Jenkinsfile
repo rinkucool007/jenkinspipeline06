@@ -2,7 +2,7 @@
 stage 'Setup'
 def userInput = input(
   id: 'userInput', message:'Enter the city and number of tests to run', parameters: [
-    choice(choices: 'tucson\nelpaso\naustin'], description: '', name: 'cityInput'),
+    choice(choices: 'tucson\nelpaso\naustin', description: '', name: 'cityInput'),
     string(defaultValue: '0', description: '', name: 'testCount')
   ])
 echo ("City is: "+userInput['cityInput'])
