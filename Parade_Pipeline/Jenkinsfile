@@ -49,7 +49,7 @@ stage 'Result Check'
 
 stage 'Exception Handling / Stress Test'
   node {
-    dir('ops-scripts/Parade\ 1.5\ Testing/Exception\ Handling\ Script') {
+    dir('ops-scripts/Parade 1.5 Testing/Exception Handling Script') {
       sh 'python parade_exception.py'
     }
   }
