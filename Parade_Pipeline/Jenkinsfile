@@ -3,7 +3,55 @@ stage 'Setup'
 def userInput = input(
   id: 'userInput', message:'Enter the city and number of tests to run', parameters: [
     choice(choices: 'tucson\nelpaso\naustin', description: '', name: 'cityInput'),
-    string(defaultValue: '0', description: '', name: 'testCount')
+    string(defaultValue: '0', description: 'Range [1, 40]', name: 'testCount'),
+    string(defaultValue: '100', description: '', name: 'concurrentCount')
   ])
 echo ("City is: "+userInput['cityInput'])
 echo ("Number of Tests: "+userInput['testCount'])
+echo ("Number of concurrent calls: "+userInput['concurrentCount'])
+
+// Range check on testCount
+if(userInput['testCount'].compareTo(0)<0 || userInput['testCount'].compareTo(40)>0) {
+  echo "Test count was outside of range"
+  currentBuild.result = 'FAILURE'
+}
+
+stage 'Script/Source Checkout'
+// INSERT Slack command here once Parade channel is created
+  node {
+    dir('ops-scripts') {
+      git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/ops-scripts.git'
+    }
+    dir('parade-source') {
+      git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/metropia_parade_v2.0.git'
+    }
+  }
+
+stage 'Junit'
+  node {
+    build 'Parade JUnit Tests'
+  }
+
+stage 'Dev Deployment'
+// Waiting on documentation
+
+stage 'Mandel BB'
+  node {
+    build job:'Mandel Black Box', parameters: [
+      string(name:'cityInput', value:userInput['cityInput']),
+      string(name:'countInput', value:userInput['testCount']),
+      string(name:'concurrentInput', value:userInput['concurrentCount'])
+    ]
+  }
+
+stage 'Result Check'
+// Ask mario what to put here
+
+stage 'Exception Handling / Stress Test'
+  node {
+    dir('ops-scripts/Parade\ 1.5\ Testing/Exception\ Handling\ Script') {
+      sh 'python parade_exception.py'
+    }
+  }
+
+stage 'Sandbox Deployment'
