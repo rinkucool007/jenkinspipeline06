@@ -1,20 +1,22 @@
 #!groovy
 stage 'Setup'
-def userInput = input(
-  id: 'userInput', message:'Enter the city and number of tests to run', parameters: [
-    choice(choices: 'tucson\nelpaso\naustin', description: '', name: 'cityInput'),
-    string(defaultValue: '0', description: 'Range [1, 40]', name: 'testCount'),
-    string(defaultValue: '100', description: '', name: 'concurrentCount')
-  ])
-echo ("City is: "+userInput['cityInput'])
-echo ("Number of Tests: "+userInput['testCount'])
-echo ("Number of concurrent calls: "+userInput['concurrentCount'])
+  timeout(time: 2, unit: 'DAYS') {
+    def userInput = input(
+      id: 'userInput', message:'Enter the city and number of tests to run', parameters: [
+        choice(choices: 'tucson\nelpaso\naustin', description: '', name: 'cityInput'),
+        string(defaultValue: '0', description: 'Range [1, 40]', name: 'testCount'),
+        string(defaultValue: '100', description: '', name: 'concurrentCount')
+        ])
+  }
+  echo ("City is: "+userInput['cityInput'])
+  echo ("Number of Tests: "+userInput['testCount'])
+  echo ("Number of concurrent calls: "+userInput['concurrentCount'])
 
-// Range check on testCount
-if(userInput['testCount'].compareTo("0")<0 || userInput['testCount'].compareTo("40")>0) {
-  echo "Test count was outside of range"
-  currentBuild.result = 'FAILURE'
-}
+  // Range check on testCount
+  if(userInput['testCount'].compareTo("0")<0 || userInput['testCount'].compareTo("40")>0) {
+    echo "Test count was outside of range"
+    currentBuild.result = 'FAILURE'
+  }
 
 stage 'Script/Source Checkout'
 // INSERT Slack command here once Parade channel is created
@@ -33,7 +35,16 @@ stage 'Junit'
   }
 
 stage 'Dev Deployment'
-// Waiting on documentation
+  node {
+    dir('parade-source') {
+      sh 'scp -i ~/.ssh/Jenkins.pem -r lib ubuntu@54.218.80.167:/home/ubuntu/parade'
+      sh 'scp -i ~/.ssh/Jenkins.pem -r src/main ubuntu@54.218.80.167:/home/ubuntu/parade/src'
+      sh 'ssh ubuntu@54.218.80.167 -i ~/.ssh/Jenkins.pem /bin/bash << EOF
+            /home/ubuntu/recompile.sh
+            /home/ubuntu/restarteveryday.sh
+          EOF'
+    }
+  }
 
 stage 'Mandel BB'
   node {
@@ -44,8 +55,14 @@ stage 'Mandel BB'
     ]
   }
 
-stage 'Result Check'
-// Ask mario what to put here
+stage 'Mandel Result Check'
+  node {
+    slackSend channel: 'parade15', message: 'Please see https://www.periscopedata.com/app/metropia/79854/MANDEL-QA-QC-Reporting for Mandel review', teamDomain: 'metropia', token: '99q1ELs4BE5Xayp5WW70IwxK'
+  }
+
+  timeout(time:2, unit:'DAYS') {
+    input message: 'Accept Mandel Results', ok: 'Accept'
+  }
 
 stage 'Exception Handling / Stress Test'
   node {
@@ -54,4 +71,13 @@ stage 'Exception Handling / Stress Test'
     }
   }
 
+stage 'Exception Result Check'
+  node {
+    slackSend channel: 'parade15', message: 'Please see https://www.periscopedata.com/app/metropia/86496/Parade-Exception-Testing for Exception review', teamDomain: 'metropia', token: '99q1ELs4BE5Xayp5WW70IwxK'
+  }
+
+  timeout(time:2, unit:'DAYS') {
+    input message: 'Accept Exception Results', ok: 'Accept'
+  }
 stage 'Sandbox Deployment'
+// Waiting on documentation
