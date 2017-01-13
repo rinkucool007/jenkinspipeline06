@@ -1,0 +1,86 @@
+#!groovy
+stage 'Setup'
+  timeout(time: 2, unit: 'DAYS') {
+    def userInput = input(
+      id: 'userInput', message:'Enter city', parameters: [
+        choice(choices: 'tucson\nelpaso_juarez\naustin\nnewyork',
+              description: '', name: 'cityInput')
+      ])
+  }
+  echo ("City is: "+userInput)
+
+  sh 'mkdir $WORKSPACE/output'
+
+stage 'Script Checkout'
+  node {
+    git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
+  }
+
+stage 'pull_network.py'
+  node {
+    dir('pull_new_network_version') {
+      sh 'python pull_network.py $WORKPACE/output '+$userInput
+    }
+  }
+
+stage 'nn_angle.py'
+  node {
+    dir('pull_new_network_version') {
+      sh 'python nn_angle.py $WORKSPACE/output'
+    }
+  }
+
+stage 'readnetwork.java'
+  node {
+    dir('java_programs/readnetwork/readnetwork') {
+      //TODO: insert javac/java sequence here (input is filepath)
+    }
+  }
+
+stage 'wkt.java'
+  node {
+    dir('java_programs/wkt/wkt') {
+      //TODO: insert javac/java sequence here (input is filepath)
+    }
+  }
+
+stage 'build_zone_table.py'
+  node {
+    dir('pull_new_network_version') {
+      sh 'python build_zone_table.py $WORKSPACE/output '+userInput
+    }
+  }
+
+stage 'create_tdtr.py'
+  node {
+    dir('pull_new_network_version') {
+      sh 'python create_tdtr.py $WORKPACE/output '+userInput
+    }
+  }
+
+stage 'new_turn_restrictions.py'
+  node {
+    dir('pull_new_network_version') {
+      sh 'python new_turn_restrictions.py $WORKSPACE/output '+userInput
+    }
+  }
+
+stage 'topology.py'
+  node {
+    dir('topology') {
+      sh 'python topology.py $WORKPACE/output '+userInput
+    }
+  }
+
+stage 'mandel_preprocessing.py'
+  node {
+    //TODO: Insert mandel script path
+  }
+
+// Archive into Jenkins storage, and into file structure
+stage 'Archive results'
+  node {
+    archiveArtifacts 'output/network\\ -\\ link.csv'
+    sh 'mkdir $WORKSPACE/'+userInput+'/$BUILD_NUMBER'
+    sh 'cp output/network\\ -\\ link.csv $WORKSPACE/'+userInput+'/$BUILD_NUMBER'
+  }
