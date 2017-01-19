@@ -1,13 +1,6 @@
 #!groovy
 stage 'Setup'
-  timeout(time: 2, unit: 'DAYS') {
-    def userInput = input(
-      id: 'userInput', message:'Enter city', parameters: [
-        choice(choices: 'tucson\nelpaso_juarez\naustin\nnewyork',
-              description: '', name: 'cityInput')
-      ])
-  }
-  echo ("City is: "+userInput)
+  echo ("City is: ${City}")
 
   sh 'mkdir $WORKSPACE/output'
 
@@ -20,14 +13,14 @@ stage 'Script Checkout'
 stage 'pull_network.py'
   node {
     dir('pull_new_network_version') {
-      sh 'python pull_network.py $WORKPACE/output '+userInput
+      sh 'python pull_network.py ${WORKSPACE}/output ${City}'
     }
   }
 
 stage 'nn_angle.py'
   node {
     dir('pull_new_network_version') {
-      sh 'python nn_angle.py $WORKSPACE/output'
+      sh 'python nn_angle.py ${WORKSPACE}/output'
     }
   }
 
@@ -35,7 +28,7 @@ stage 'readnetwork.java'
   node {
     dir('java_programs/readnetwork/readnetwork') {
       sh 'javac *.java'
-      sh 'java Main $WORKSPACE/output'
+      sh 'java Main ${WORKSPACE}/output'
     }
   }
 
@@ -43,42 +36,42 @@ stage 'wkt.java'
   node {
     dir('java_programs/wkt/wkt') {
       sh 'javac *.java'
-      sh 'java ObjectMain $WORKSPACE/output'
+      sh 'java ObjectMain ${WORKSPACE}/output'
     }
   }
 
 stage 'build_zone_table.py'
   node {
     dir('pull_new_network_version') {
-      sh 'python build_zone_table.py $WORKSPACE/output '+userInput
+      sh 'python build_zone_table.py ${WORKSPACE}/output ${City}'
     }
   }
 
 stage 'create_tdtr.py'
   node {
     dir('pull_new_network_version') {
-      sh 'python create_tdtr.py $WORKPACE/output '+userInput
+      sh 'python create_tdtr.py ${WORKSPACE}/output ${City}'
     }
   }
 
 stage 'new_turn_restrictions.py'
   node {
     dir('pull_new_network_version') {
-      sh 'python new_turn_restrictions.py $WORKSPACE/output '+userInput
+      sh 'python new_turn_restrictions.py ${WORKSPACE}/output ${City}'
     }
   }
 
 stage 'topology.py'
   node {
     dir('topology') {
-      sh 'python topology.py $WORKPACE/output '+userInput
+      sh 'python topology.py ${WORKSPACE}/output ${City}'
     }
   }
 
 stage 'mandel_preprocessing.py'
   node {
     dir('mandel_preprocessing') {
-      sh 'python preprocessing.py $WORKSPACE/output '+userInput
+      sh 'python preprocessing.py ${WORKSPACE}/output ${City}'
     }
   }
 
@@ -86,6 +79,6 @@ stage 'mandel_preprocessing.py'
 stage 'Archive results'
   node {
     archiveArtifacts 'output/network\\ -\\ link.csv'
-    sh 'mkdir $WORKSPACE/'+userInput+'/$BUILD_NUMBER'
-    sh 'cp output/network\\ -\\ link.csv $WORKSPACE/'+userInput+'/$BUILD_NUMBER'
+    sh 'mkdir ${WORKSPACE}/${City}/${BUILD_NUMBER}'
+    sh 'cp output/network\\ -\\ link.csv ${WORKSPACE}/${City}/${BUILD_NUMBER}'
   }
