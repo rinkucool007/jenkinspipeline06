@@ -1,6 +1,7 @@
 #!groovy
 stage 'Setup'
   echo ("City is: ${City}")
+  echo ('${PYTHONPATH}')
   node {
     sh 'mkdir -p $WORKSPACE/output'
   }
