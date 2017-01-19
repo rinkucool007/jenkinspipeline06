@@ -2,7 +2,7 @@
 stage 'Setup'
   echo ("City is: ${City}")
   node {
-    sh 'mkdir $WORKSPACE/output'
+    sh 'mkdir -p $WORKSPACE/output'
   }
 stage 'Script Checkout'
   node {
