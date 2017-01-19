@@ -1,9 +1,9 @@
 #!groovy
 stage 'Setup'
   echo ("City is: ${City}")
-
-  sh 'mkdir $WORKSPACE/output'
-
+  node {
+    sh 'mkdir $WORKSPACE/output'
+  }
 stage 'Script Checkout'
   node {
     git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
