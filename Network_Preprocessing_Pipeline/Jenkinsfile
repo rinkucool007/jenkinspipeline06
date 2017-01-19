@@ -16,10 +16,11 @@ stage 'Script Checkout'
     git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
   }
 
+// Start the script sequence
 stage 'pull_network.py'
   node {
     dir('pull_new_network_version') {
-      sh 'python pull_network.py $WORKPACE/output '+$userInput
+      sh 'python pull_network.py $WORKPACE/output '+userInput
     }
   }
 
@@ -33,14 +34,16 @@ stage 'nn_angle.py'
 stage 'readnetwork.java'
   node {
     dir('java_programs/readnetwork/readnetwork') {
-      //TODO: insert javac/java sequence here (input is filepath)
+      sh 'javac *.java'
+      sh 'java Main $WORKSPACE/output'
     }
   }
 
 stage 'wkt.java'
   node {
     dir('java_programs/wkt/wkt') {
-      //TODO: insert javac/java sequence here (input is filepath)
+      sh 'javac *.java'
+      sh 'java ObjectMain $WORKSPACE/output'
     }
   }
 
@@ -74,10 +77,12 @@ stage 'topology.py'
 
 stage 'mandel_preprocessing.py'
   node {
-    //TODO: Insert mandel script path
+    dir('mandel_preprocessing') {
+      sh 'python preprocessing.py $WORKSPACE/output '+userInput
+    }
   }
 
-// Archive into Jenkins storage, and into file structure
+// Archive into Jenkins' storage, and into file structure
 stage 'Archive results'
   node {
     archiveArtifacts 'output/network\\ -\\ link.csv'
