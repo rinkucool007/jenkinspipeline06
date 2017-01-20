@@ -29,20 +29,20 @@ stage 'nn_angle.py'
 stage 'readnetwork.java'
   node {
     dir('java_programs/readnetwork/readnetwork') {
-      sh '''#!/bin/bash -l
+      sh """#!/bin/bash -l
       javac *.java
       java -cp .. readnetwork/Main ${WORKSPACE}/output
-      '''
+      """
     }
   }
 
 stage 'wkt.java'
   node {
     dir('java_programs/wkt/wkt') {
-      sh '''#!/bin/bash -l
+      sh """#!/bin/bash -l
       javac *.java
-      java -cp .. wkt/ObjectMain ${WORKSPACE}/output
-      '''
+      java -cp .. wkt/ObjectMain ${WORKSPACE}/output ${City}
+      """
     }
   }
 
