@@ -1,9 +1,5 @@
 #!groovy
 stage 'Setup'
-  node{
-    deleteDir()
-    sleep 2
-  }
   echo ("City is: ${City}")
   node {
     sh """#!/bin/bash -l
