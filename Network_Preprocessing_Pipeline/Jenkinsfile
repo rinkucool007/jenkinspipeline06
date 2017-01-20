@@ -31,7 +31,7 @@ stage 'readnetwork.java'
     dir('java_programs/readnetwork/readnetwork') {
       sh '''#!/bin/bash -l
       javac *.java
-      java Main ${WORKSPACE}/output
+      java -cp .. readnetwork/Main ${WORKSPACE}/output
       '''
     }
   }
@@ -41,7 +41,7 @@ stage 'wkt.java'
     dir('java_programs/wkt/wkt') {
       sh '''#!/bin/bash -l
       javac *.java
-      java ObjectMain ${WORKSPACE}/output
+      java -cp .. wkt/ObjectMain ${WORKSPACE}/output
       '''
     }
   }
