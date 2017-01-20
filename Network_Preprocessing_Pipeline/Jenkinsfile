@@ -30,7 +30,7 @@ stage 'readnetwork.java'
   node {
     dir('java_programs/readnetwork/readnetwork') {
       sh '''#!/bin/bash -l
-      javac *.java'
+      javac *.java
       java Main ${WORKSPACE}/output
       '''
     }
@@ -40,7 +40,7 @@ stage 'wkt.java'
   node {
     dir('java_programs/wkt/wkt') {
       sh '''#!/bin/bash -l
-      javac *.java'
+      javac *.java
       java ObjectMain ${WORKSPACE}/output
       '''
     }
