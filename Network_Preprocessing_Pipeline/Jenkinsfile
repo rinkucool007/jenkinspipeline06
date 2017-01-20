@@ -29,7 +29,7 @@ stage 'nn_angle.py'
 stage 'readnetwork.java'
   node {
     dir('java_programs/readnetwork/readnetwork') {
-      sh 'javac -Xlint:unchecked *.java'
+      sh 'javac *.java'
       sh "java Main ${WORKSPACE}/output"
     }
   }
