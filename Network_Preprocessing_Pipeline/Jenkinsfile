@@ -2,6 +2,8 @@
 stage 'Setup'
   echo ("City is: ${City}")
   node {
+    // Cleans workspace before checkout
+    deleteDir()
     sh "export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}"
     sh 'echo ${PYTHONPATH}'
     sh "mkdir -p ${WORKSPACE}/output"
