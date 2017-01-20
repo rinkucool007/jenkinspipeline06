@@ -4,9 +4,11 @@ stage 'Setup'
   node {
     // Cleans workspace before checkout
     deleteDir()
-    sh "export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}"
-    sh 'echo ${PYTHONPATH}'
-    sh "mkdir -p ${WORKSPACE}/output"
+    sh """#!/bin/bash -l
+      export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}
+      echo ${PYTHONPATH}
+      mkdir -p ${WORKSPACE}/output
+    """
   }
 stage 'Script Checkout'
   node {
@@ -32,8 +34,8 @@ stage 'readnetwork.java'
   node {
     dir('java_programs/readnetwork/readnetwork') {
       sh """#!/bin/bash -l
-      javac *.java
-      java -cp .. readnetwork/Main ${WORKSPACE}/output
+        javac *.java
+        java -cp .. readnetwork/Main ${WORKSPACE}/output
       """
     }
   }
@@ -42,8 +44,8 @@ stage 'wkt.java'
   node {
     dir('java_programs/wkt/wkt') {
       sh """#!/bin/bash -l
-      javac *.java
-      java -cp .. wkt/ObjectMain ${WORKSPACE}/output ${City}
+        javac *.java
+        java -cp .. wkt/ObjectMain ${WORKSPACE}/output ${City}
       """
     }
   }
