@@ -1,9 +1,11 @@
 #!groovy
 stage 'Setup'
+  node{
+    deleteDir()
+    sleep 2
+  }
   echo ("City is: ${City}")
   node {
-    // Cleans workspace before checkout
-    deleteDir()
     sh """#!/bin/bash -l
       export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}
       echo ${PYTHONPATH}
