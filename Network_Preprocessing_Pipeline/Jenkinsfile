@@ -88,6 +88,6 @@ stage 'mandel_preprocessing.py'
 stage 'Archive results'
   node {
     archiveArtifacts 'output/network\\ -\\ link.csv'
-    sh "mkdir ${WORKSPACE}/${City}/${BUILD_NUMBER}"
+    sh "mkdir -p ${WORKSPACE}/${City}/${BUILD_NUMBER}"
     sh "cp output/network\\ -\\ link.csv ${WORKSPACE}/${City}/${BUILD_NUMBER}"
   }
