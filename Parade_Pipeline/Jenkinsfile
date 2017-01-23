@@ -70,6 +70,14 @@ stage 'Mandel Result Check' {
   }
 }
 
+stage 'Google/Parade Comparison' {
+  node {
+    dir('ops-scripts/Parade 1.5 Testing/goog_parade_route_comparison/') {
+      sh 'python goog_parade.py'
+    }
+  }
+}
+
 stage 'Exception Handling / Stress Test' {
   node {
     dir('ops-scripts/Parade 1.5 Testing/Exception Handling Script') {
