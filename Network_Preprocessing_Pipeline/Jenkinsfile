@@ -1,5 +1,5 @@
 #!groovy
-stage 'Setup'
+stage 'Setup' {
   echo ("City is: ${City}")
   node {
     sh """#!/bin/bash -l
@@ -9,27 +9,32 @@ stage 'Setup'
       mkdir -p ${WORKSPACE}/output
     """
   }
-stage 'Script Checkout'
+}
+
+stage 'Script Checkout' {
   node {
     git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
   }
+}
 
 // Start the script sequence
-stage 'pull_network.py'
+stage 'pull_network.py' {
   node {
     dir('pull_new_network_version') {
       sh "python pull_network.py ${WORKSPACE}/output/ ${City}"
     }
   }
+}
 
-stage 'nn_angle.py'
+stage 'nn_angle.py' {
   node {
     dir('pull_new_network_version') {
       sh "python nn_angle.py ${WORKSPACE}/output/"
     }
   }
+}
 
-stage 'readnetwork.java'
+stage 'readnetwork.java' {
   node {
     dir('java_programs/readnetwork/readnetwork') {
       sh """#!/bin/bash -l
@@ -38,8 +43,9 @@ stage 'readnetwork.java'
       """
     }
   }
+}
 
-stage 'wkt.java'
+stage 'wkt.java' {
   node {
     dir('java_programs/wkt/wkt') {
       sh """#!/bin/bash -l
@@ -48,46 +54,53 @@ stage 'wkt.java'
       """
     }
   }
+}
 
-stage 'build_zone_table.py'
+stage 'build_zone_table.py' {
   node {
     dir('pull_new_network_version') {
       sh "python build_zone_table.py ${WORKSPACE}/output/ ${City}"
     }
   }
+}
 
-stage 'create_tdtr.py'
+stage 'create_tdtr.py' {
   node {
     dir('pull_new_network_version') {
       sh "python create_tdtr.py ${WORKSPACE}/output/ ${City}"
     }
   }
+}
 
-stage 'new_turn_restrictions.py'
+stage 'new_turn_restrictions.py' {
   node {
     dir('pull_new_network_version') {
       sh "python new_turn_restrictions.py ${WORKSPACE}/output/ ${City}"
     }
   }
+}
 
-stage 'topology.py'
+stage 'topology.py' {
   node {
     dir('topology') {
       sh "python topology.py ${WORKSPACE}/output/ ${City}"
     }
   }
+}
 
-stage 'mandel_preprocessing.py'
+stage 'mandel_preprocessing.py' {
   node {
     dir('mandel_preprocessing') {
       sh "python preprocessing.py ${WORKSPACE}/output/ ${City}"
     }
   }
+}
 
 // Archive into Jenkins' storage, and into file structure
-stage 'Archive results'
+stage 'Archive results' {
   node {
     archiveArtifacts 'output/network - link.csv'
     sh "mkdir -p ${WORKSPACE}/${City}/${BUILD_NUMBER}"
     sh "cp output/network\\ -\\ link.csv ${WORKSPACE}/${City}/${BUILD_NUMBER}"
   }
+}

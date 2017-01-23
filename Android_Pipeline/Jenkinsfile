@@ -1,56 +1,60 @@
 #!groovy
 
-stage 'Build APK'
-node {
-  build 'Build Android APK'
-}
-
-stage 'JUnit Tests'
-node {
-  // TODO: Add JUnit tests
-}
-
-stage 'Appium Checkout'
-node {
-  git credentialsId: '774f8c0d-0d5b-454d-aaae-d4ce11127aee', url: 'git@bitbucket.org:zhaohan93/metropia-appium-automation-testing-android.git'
-}
-
-stage 'Appium Tests'
-
-mavenSuccess = true
-node {
-  step([$class: 'CopyArtifact', filter: '**/*.apk', fingerprintArtifacts: true, projectName: 'Build Android apk', selector: [$class: 'StatusBuildSelector', stable: false]])
-
-  // Run the maven test pom
-  try {
-    withEnv(["PATH+MAVEN=${tool 'M3'}/bin", "JAVA_HOME=${tool 'JDK-1.8'}"]) {
-      sh "mvn -Dmaven.test.failure.ignore=false clean test"
-    }
-  } catch (Exception e) {
-    mavenSuccess = false
-  }
-
-  // Publish the TestNG results
-  step([$class: 'Publisher'])
-}
-
-stage 'Stability Check'
-
-if(mavenSuccess) {
-  stage 'Fabric'
-  //slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+stage 'Build APK' {
   node {
-    //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
+    build 'Build Android APK'
   }
+}
 
-  currentBuild.result = 'SUCCESS'
-} else {
-  //slackSend channel: '#android-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
-  timeout(time:2, unit:'DAYS') {
-    inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
+stage 'JUnit Tests' {
+  node {
+    // TODO: Add JUnit tests
   }
+}
 
-stage 'Fabric'
+stage 'Appium Checkout' {
+  node {
+    git credentialsId: '774f8c0d-0d5b-454d-aaae-d4ce11127aee', url: 'git@bitbucket.org:zhaohan93/metropia-appium-automation-testing-android.git'
+  }
+}
+
+stage 'Appium Tests' {
+  mavenSuccess = true
+  node {
+    step([$class: 'CopyArtifact', filter: '**/*.apk', fingerprintArtifacts: true, projectName: 'Build Android apk', selector: [$class: 'StatusBuildSelector', stable: false]])
+
+    // Run the maven test pom
+    try {
+      withEnv(["PATH+MAVEN=${tool 'M3'}/bin", "JAVA_HOME=${tool 'JDK-1.8'}"]) {
+        sh "mvn -Dmaven.test.failure.ignore=false clean test"
+      }
+    } catch (Exception e) {
+      mavenSuccess = false
+    }
+
+    // Publish the TestNG results
+    step([$class: 'Publisher'])
+  }
+}
+
+stage 'Stability Check' {
+  if(mavenSuccess) {
+    stage 'Fabric'
+    //slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+    node {
+      //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'Android Beta Release')]
+    }
+
+    currentBuild.result = 'SUCCESS'
+  } else {
+    //slackSend channel: '#android-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
+    timeout(time:2, unit:'DAYS') {
+      inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
+    }
+  }
+}
+
+stage 'Fabric' {
   if(inputVal) {
     //slackSend channel: '#android-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
     node {

@@ -1,54 +1,58 @@
 #!groovy
 
-stage 'Build IPA'
-node {
-  build 'Build iOS ipa'
-}
-
-stage 'Appium Checkout'
-node {
-  git credentialsId: '774f8c0d-0d5b-454d-aaae-d4ce11127aee', url: 'git@bitbucket.org:zhaohan93/metropia-appium-automation-testing-ios.git'
-}
-
-stage 'Appium Tests'
-// Default the success to true
-mavenSuccess = true
-node {
-  step([$class: 'CopyArtifact', filter: '**/*.ipa', fingerprintArtifacts: true, projectName: 'Build iOS ipa', selector: [$class: 'StatusBuildSelector', stable: false]])
-
-  // Run the maven test pom
-  try {
-    withEnv(["PATH+MAVEN=${tool 'M3'}/bin", "JAVA_HOME=${tool 'JDK-1.8'}"]) {
-      sh "mvn -Dmaven.test.failure.ignore=false clean test"
-    }
-  } catch (Exception e) {
-    mavenSuccess = false
-  }
-
-  // Publish the TestNG results
-  step([$class: 'Publisher'])
-}
-
-stage 'Stability Check'
-
-if(mavenSuccess) {
-  stage 'Fabric'
-  // Notify on Slack
-  //slackSend channel: '#ios-testing', color: 'good', message: 'Appium tests passed. Pushing beta to Fabric', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+stage 'Build IPA' {
   node {
-    // Push version to crashlytics
-    //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'iOS Beta Release')]
+    build 'Build iOS ipa'
   }
+}
 
-  currentBuild.result = 'SUCCESS'
-} else {
-  // Notify on Slack
-  //slackSend channel: '#ios-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
-  timeout(time:2, unit:'DAYS') {
-    inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
+stage 'Appium Checkout' {
+  node {
+    git credentialsId: '774f8c0d-0d5b-454d-aaae-d4ce11127aee', url: 'git@bitbucket.org:zhaohan93/metropia-appium-automation-testing-ios.git'
   }
+}
 
-stage 'Fabric'
+stage 'Appium Tests' {
+  // Default the success to true
+  mavenSuccess = true
+  node {
+    step([$class: 'CopyArtifact', filter: '**/*.ipa', fingerprintArtifacts: true, projectName: 'Build iOS ipa', selector: [$class: 'StatusBuildSelector', stable: false]])
+
+    // Run the maven test pom
+    try {
+      withEnv(["PATH+MAVEN=${tool 'M3'}/bin", "JAVA_HOME=${tool 'JDK-1.8'}"]) {
+        sh "mvn -Dmaven.test.failure.ignore=false clean test"
+      }
+    } catch (Exception e) {
+      mavenSuccess = false
+    }
+
+    // Publish the TestNG results
+    step([$class: 'Publisher'])
+  }
+}
+
+stage 'Stability Check' {
+  if(mavenSuccess) {
+    stage 'Fabric'
+    // Notify on Slack
+    //slackSend channel: '#ios-testing', color: 'good', message: 'Appium tests passed. Pushing beta to Fabric', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+    node {
+      // Push version to crashlytics
+      //build job: 'Publish Beta', parameters: [string(name: 'fabricChoice', value: 'iOS Beta Release')]
+    }
+
+    currentBuild.result = 'SUCCESS'
+  } else {
+    // Notify on Slack
+    //slackSend channel: '#ios-testing', color: 'warning', message: 'Appium tests failed. Waiting for QA/QC decision to override.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
+    timeout(time:2, unit:'DAYS') {
+      inputVal = input message: 'Push to Fabric?', parameters: [booleanParam(defaultValue: false, description: 'If true, ignore the Appium failed test and push the beta version to Fabric', name: 'override')], submitter: 'nlarson184'
+    }
+  }
+}
+
+stage 'Fabric' {
   if(inputVal) {
     //slackSend channel: '#ios-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
     node {
