@@ -70,6 +70,14 @@ stage('Mandel Result Check') {
   }
 }
 
+
+stage 'Google/Parade Comparison' {
+  node {
+    build 'Google_Parade_Comparison'
+    }
+  }
+}
+
 stage('Exception Handling / Stress Test') {
   node {
     dir('ops-scripts/Parade 1.5 Testing/Exception Handling Script') {
