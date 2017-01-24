@@ -1,7 +1,7 @@
 #!groovy
 
 // Pull the scripts from ops-script repo
-stage 'Script Checkout' {
+stage('Script Checkout') {
   node {
     slackSend channel: '#navigator', color: 'good', message: 'Navigator deployment pipeline started.', teamDomain: 'metropia', token: 'G051i0CE8ZtJJUUfH9ntuxta'
     dir('ops_scripts') {
@@ -11,7 +11,7 @@ stage 'Script Checkout' {
 }
 
 // Run save_response.py and save results.csv
-stage 'Save_Response Script' {
+stage('Save_Response Script') {
   node {
     dir('ops_scripts/compare_navigator_response') {
       sh 'python save_response.py'
@@ -20,7 +20,7 @@ stage 'Save_Response Script' {
 }
 
 // Pull the navigator update
-stage 'Navigator Checkout' {
+stage('Navigator Checkout') {
   node {
     dir('navigator_files') {
       git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/navigator.git'
@@ -29,7 +29,7 @@ stage 'Navigator Checkout' {
 }
 
 // Deploy the navigator update
-stage 'Navigator Deployment' {
+stage('Navigator Deployment') {
   node {
     dir('navigator_files') {
       sh 'scp -i ~/.ssh/Jenkins.pem __init__.py dbf.py earth.py geometry.py navigation.py restart-all.sh restart.sh signs.py titlecase.py ubuntu@52.11.192.135:~/'
@@ -38,7 +38,7 @@ stage 'Navigator Deployment' {
 }
 
 // Run compare_response.py and save results csv
-stage 'Compare_Response Script' {
+stage('Compare_Response Script') {
   node {
     dir('ops_scripts/compare_navigator_response') {
       sh 'python compare_response.py'
@@ -48,7 +48,7 @@ stage 'Compare_Response Script' {
 }
 
 // Wait for manual check of results csv (for regression/check issues)
-stage 'Stability Check' {
+stage('Stability Check') {
   node {
     slackSend channel: '#navigator', color: 'good', message: 'Compare_response.py successfully completed. Waiting on engineer to check and approve route_comparison.csv. See https://jenkins.metropia.com/job/Navigator%20Pipeline/ for more details.', teamDomain: 'metropia', token: 'G051i0CE8ZtJJUUfH9ntuxta'
   }
@@ -59,7 +59,7 @@ stage 'Stability Check' {
 
 
 // Parallel stage
-stage 'Generate Jenkins Test Result csv and Deploy on Sandbox' {
+stage('Generate Jenkins Test Result csv and Deploy on Sandbox') {
   parallel(
     // Generate a Jenkins-readable csv
     phase1: {},

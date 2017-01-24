@@ -1,24 +1,24 @@
 #!groovy
 
-stage 'Build APK' {
+stage('Build APK') {
   node {
     build 'Build Android APK'
   }
 }
 
-stage 'JUnit Tests' {
+stage('JUnit Tests') {
   node {
     // TODO: Add JUnit tests
   }
 }
 
-stage 'Appium Checkout' {
+stage('Appium Checkout') {
   node {
     git credentialsId: '774f8c0d-0d5b-454d-aaae-d4ce11127aee', url: 'git@bitbucket.org:zhaohan93/metropia-appium-automation-testing-android.git'
   }
 }
 
-stage 'Appium Tests' {
+stage('Appium Tests') {
   mavenSuccess = true
   node {
     step([$class: 'CopyArtifact', filter: '**/*.apk', fingerprintArtifacts: true, projectName: 'Build Android apk', selector: [$class: 'StatusBuildSelector', stable: false]])
@@ -37,7 +37,7 @@ stage 'Appium Tests' {
   }
 }
 
-stage 'Stability Check' {
+stage('Stability Check') {
   if(mavenSuccess) {
     stage 'Fabric'
     //slackSend channel: '#android-testing', color: 'good', message: 'Appium tests passed, pushing beta to Fabric', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
@@ -54,7 +54,7 @@ stage 'Stability Check' {
   }
 }
 
-stage 'Fabric' {
+stage('Fabric') {
   if(inputVal) {
     //slackSend channel: '#android-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'W0j3RLOzMbJAW84nqmPiHyvQ'
     node {

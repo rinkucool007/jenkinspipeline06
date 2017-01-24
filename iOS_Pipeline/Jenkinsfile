@@ -1,18 +1,18 @@
 #!groovy
 
-stage 'Build IPA' {
+stage('Build IPA') {
   node {
     build 'Build iOS ipa'
   }
 }
 
-stage 'Appium Checkout' {
+stage('Appium Checkout') {
   node {
     git credentialsId: '774f8c0d-0d5b-454d-aaae-d4ce11127aee', url: 'git@bitbucket.org:zhaohan93/metropia-appium-automation-testing-ios.git'
   }
 }
 
-stage 'Appium Tests' {
+stage('Appium Tests') {
   // Default the success to true
   mavenSuccess = true
   node {
@@ -32,7 +32,7 @@ stage 'Appium Tests' {
   }
 }
 
-stage 'Stability Check' {
+stage('Stability Check') {
   if(mavenSuccess) {
     stage 'Fabric'
     // Notify on Slack
@@ -52,7 +52,7 @@ stage 'Stability Check' {
   }
 }
 
-stage 'Fabric' {
+stage('Fabric') {
   if(inputVal) {
     //slackSend channel: '#ios-testing', color: 'good', message: 'QA/QC decided to override.  Pushing beta to Fabric.', teamDomain: 'metropia', token: 'fe05HP7h4BGMbKwCPX6KpmqH'
     node {
