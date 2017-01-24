@@ -99,8 +99,11 @@ stage('mandel_preprocessing.py') {
 // Archive into Jenkins' storage, and into file structure
 stage('Archive results') {
   node {
-    archiveArtifacts 'output/**'
-    sh "mkdir -p ${WORKSPACE}/${City}/${BUILD_NUMBER}"
-    sh "cp output/network\\ -\\ link.csv ${WORKSPACE}/${City}/${BUILD_NUMBER}"
+    sh """#!/bin/bash -l
+    zip -r output.zip output
+    mkdir ${WORKSPACE}/${CITY}/${BUILD_NUMBER}
+    cp output.zip ${WORKSPACE}/${CITY}/${BUILD_NUMBER}
+    """
+    archiveArtifacts 'output.zip'
   }
 }
