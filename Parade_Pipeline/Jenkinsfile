@@ -1,5 +1,5 @@
 #!groovy
-stage 'Setup' {
+stage('Setup') {
   timeout(time: 2, unit: 'DAYS') {
     def userInput = input(
       id: 'userInput', message:'Enter the city and number of tests to run', parameters: [
@@ -19,7 +19,7 @@ stage 'Setup' {
   }
 }
 
-stage 'Script/Source Checkout' {
+stage('Script/Source Checkout') {
 // INSERT Slack command here once Parade channel is created
   node {
     dir('ops-scripts') {
@@ -31,13 +31,13 @@ stage 'Script/Source Checkout' {
   }
 }
 
-stage 'Junit' {
+stage('Junit') {
   node {
     build 'Parade JUnit Tests'
   }
 }
 
-stage 'Dev Deployment' {
+stage('Dev Deployment') {
   node {
     dir('parade-source') {
       sh 'scp -i ~/.ssh/Jenkins.pem -r lib ubuntu@54.218.80.167:/home/ubuntu/parade'
@@ -50,7 +50,7 @@ stage 'Dev Deployment' {
   }
 }
 
-stage 'Mandel BB' {
+stage('Mandel BB') {
   node {
     build job:'Mandel Black Box', parameters: [
       string(name:'cityInput', value:userInput['cityInput']),
@@ -60,7 +60,7 @@ stage 'Mandel BB' {
   }
 }
 
-stage 'Mandel Result Check' {
+stage('Mandel Result Check') {
   node {
     slackSend channel: 'parade15', message: 'Please see https://www.periscopedata.com/app/metropia/79854/MANDEL-QA-QC-Reporting for Mandel review', teamDomain: 'metropia', token: '99q1ELs4BE5Xayp5WW70IwxK'
   }
@@ -70,7 +70,7 @@ stage 'Mandel Result Check' {
   }
 }
 
-stage 'Exception Handling / Stress Test' {
+stage('Exception Handling / Stress Test') {
   node {
     dir('ops-scripts/Parade 1.5 Testing/Exception Handling Script') {
       sh 'python parade_exception.py'
@@ -78,7 +78,7 @@ stage 'Exception Handling / Stress Test' {
   }
 }
 
-stage 'Exception Result Check' {
+stage('Exception Result Check') {
   node {
     slackSend channel: 'parade15', message: 'Please see https://www.periscopedata.com/app/metropia/86496/Parade-Exception-Testing for Exception review', teamDomain: 'metropia', token: '99q1ELs4BE5Xayp5WW70IwxK'
   }
@@ -87,6 +87,6 @@ stage 'Exception Result Check' {
     input message: 'Accept Exception Results', ok: 'Accept'
   }
 }
-stage 'Sandbox Deployment' {
+stage('Sandbox Deployment') {
 // Waiting on documentation
 }
