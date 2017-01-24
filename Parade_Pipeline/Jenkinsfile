@@ -72,8 +72,7 @@ stage 'Mandel Result Check' {
 
 stage 'Google/Parade Comparison' {
   node {
-    dir('ops-scripts/Parade 1.5 Testing/goog_parade_route_comparison/') {
-      sh 'python goog_parade.py'
+    build 'Google_Parade_Comparison'
     }
   }
 }
