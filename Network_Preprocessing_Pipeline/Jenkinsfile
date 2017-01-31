@@ -82,12 +82,14 @@ stage('new_turn_restrictions.py') {
 
 stage('topology.py') {
   node{
-    stash includes: '**/topology/*', name: 'topology'
+    stash includes: '**/topology/*', name: 'topology_script'
+    stash includes: '**/output/network - node.csv, **/output/network - link.csv', name: 'topology_files'
   }
   node('windows') {
-    unstash 'topology'
+    unstash 'topology_script'
+    unstash 'topology_files'
     dir('topology') {
-      bat "C:\\Python27\\python.exe topology.py .\\output\\ ${City}"
+      bat "C:\\Python27\\python.exe topology.py ..\\output\\ ${City}"
       stash includes: '**/output/*', name: 'topology_slave'
     }
   }
