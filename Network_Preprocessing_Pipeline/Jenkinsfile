@@ -83,7 +83,7 @@ stage('new_turn_restrictions.py') {
 stage('topology.py') {
   node('windows') {
     dir('topology') {
-      echo "%PATH%"
+      bat "echo %PATH%"
       bat "C:\\Python27\\python.exe topology.py .\\output\\ ${City}"
     }
   }
