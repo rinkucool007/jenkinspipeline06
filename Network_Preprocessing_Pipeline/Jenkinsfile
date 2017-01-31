@@ -87,7 +87,7 @@ stage('topology.py') {
   node('windows') {
     unstash 'topology'
     bat "C:\\Python27\\python.exe topology\\topology.py .\\output\\ ${City}"
-    stash includes'**/output/*', name: 'topology_slave'
+    stash includes: '**/output/*', name: 'topology_slave'
   }
   node {
     dir("${WORKSPACE}") {
