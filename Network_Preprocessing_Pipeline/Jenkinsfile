@@ -5,10 +5,9 @@ stage('Setup') {
     sh """#!/bin/bash -l
       export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}
       echo ${PYTHONPATH}
-      """
-    //  rm -r ${WORKSPACE}/output
-    //  mkdir -p ${WORKSPACE}/output
-    //"""
+      rm -r ${WORKSPACE}/output
+      mkdir -p ${WORKSPACE}/output
+    """
   }
 }
 
@@ -22,7 +21,7 @@ stage('Script Checkout') {
 stage('pull_network.py') {
   node {
     dir('pull_new_network_version') {
-      //sh "python pull_network.py ${WORKSPACE}/output/ ${City}"
+      sh "python pull_network.py ${WORKSPACE}/output/ ${City}"
     }
   }
 }
@@ -30,7 +29,7 @@ stage('pull_network.py') {
 stage('nn_angle.py') {
   node {
     dir('pull_new_network_version') {
-      //sh "python nn_angle.py ${WORKSPACE}/output/"
+      sh "python nn_angle.py ${WORKSPACE}/output/"
     }
   }
 }
@@ -38,10 +37,10 @@ stage('nn_angle.py') {
 stage('readnetwork.java') {
   node {
     dir('java_programs/readnetwork/readnetwork') {
-      //sh """#!/bin/bash -l
-      //  javac *.java
-      //  java -cp .. readnetwork/Main ${WORKSPACE}/output/
-      //"""
+      sh """#!/bin/bash -l
+        javac *.java
+        java -cp .. readnetwork/Main ${WORKSPACE}/output/
+      """
     }
   }
 }
@@ -49,10 +48,10 @@ stage('readnetwork.java') {
 stage('wkt.java') {
   node {
     dir('java_programs/wkt/wkt') {
-      //sh """#!/bin/bash -l
-      //  javac *.java
-      //  java -cp .. wkt/ObjectMain ${WORKSPACE}/output/ ${City}
-      //"""
+      sh """#!/bin/bash -l
+        javac *.java
+        java -cp .. wkt/ObjectMain ${WORKSPACE}/output/ ${City}
+      """
     }
   }
 }
@@ -60,7 +59,7 @@ stage('wkt.java') {
 stage('build_zone_table.py') {
   node {
     dir('pull_new_network_version') {
-      //sh "python build_zone_table.py ${WORKSPACE}/output/ ${City}"
+      sh "python build_zone_table.py ${WORKSPACE}/output/ ${City}"
     }
   }
 }
@@ -68,7 +67,7 @@ stage('build_zone_table.py') {
 stage('create_tdtr.py') {
   node {
     dir('pull_new_network_version') {
-      //sh "python create_tdtr.py ${WORKSPACE}/output/ ${City}"
+      sh "python create_tdtr.py ${WORKSPACE}/output/ ${City}"
     }
   }
 }
@@ -76,7 +75,7 @@ stage('create_tdtr.py') {
 stage('new_turn_restrictions.py') {
   node {
     dir('pull_new_network_version') {
-      //sh "python new_turn_restrictions.py ${WORKSPACE}/output/ ${City}"
+      sh "python new_turn_restrictions.py ${WORKSPACE}/output/ ${City}"
     }
   }
 }
