@@ -81,7 +81,7 @@ stage('new_turn_restrictions.py') {
 }
 
 stage('topology.py') {
-  node {
+  node('windows') {
     dir('topology') {
       sh "python topology.py ${WORKSPACE}/output/ ${City}"
     }
@@ -101,9 +101,36 @@ stage('Archive results') {
   node {
     sh """#!/bin/bash -l
     zip -r output.zip output
-    mkdir ${WORKSPACE}/${CITY}/${BUILD_NUMBER}
-    cp output.zip ${WORKSPACE}/${CITY}/${BUILD_NUMBER}
+    mkdir ${WORKSPACE}/${City}/${BUILD_NUMBER}
+    cp output.zip ${WORKSPACE}/${City}/${BUILD_NUMBER}
     """
-    archiveArtifacts 'output.zip'
+    archiveArtifacts 'output.zip, output/*'
   }
 }
+/*
+stage('FFS Deployment') {
+  // Check with Jeff, should be an API call to move files and restart
+  build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
+}
+
+stage('Trace/Crystal/Navigator Deployment') {
+  node {
+    sleep time: 5, unit: 'MINUTES'
+
+    parallel 'Trace Deployment':{
+      build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
+    }, 'Crystal Deployment':{
+      build job: 'Crystal Server', parameters: [string(name: 'City', value: "${City}")]
+    }, 'Navigator Deployment':{
+      build job: 'Navigator Server', parameters: [string(name: 'City', value: "${City}")]
+    }
+
+    sleep time: 5, unit: 'MINUTES'
+  }
+}
+stage('Parade Deployment') {
+  node {
+    build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}")]
+  }
+}
+*/
