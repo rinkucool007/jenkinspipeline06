@@ -83,7 +83,7 @@ stage('new_turn_restrictions.py') {
 stage('topology.py') {
   node('windows') {
     dir('topology') {
-      bat "python topology.py ${WORKSPACE}/output/ ${City}"
+      bat "C:\Python27\python.exe topology.py ./output/ ${City}"
     }
   }
 }
