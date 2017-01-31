@@ -84,7 +84,7 @@ stage('new_turn_restrictions.py') {
 stage('topology.py') {
   node{
     stash includes: '**/topology/*', name: 'topology_script'
-    stash includes: '**/output/network - node.csv, **/output/network - link.csv', name: 'topology_files'
+    stash includes: '**/output/*', name: 'topology_files'
   }
   node('windows') {
     unstash 'topology_script'
