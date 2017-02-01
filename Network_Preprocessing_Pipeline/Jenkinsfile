@@ -116,12 +116,11 @@ stage('Archive results') {
     mkdir ${WORKSPACE}/${City}/${BUILD_NUMBER}
     cp output.zip ${WORKSPACE}/${City}/${BUILD_NUMBER}
     """
-    archiveArtifacts 'output.zip, output/*'
+    archiveArtifacts "output.zip, output/*, output/mandel/*, output/${City}/*"
   }
 }
-/*
+
 stage('FFS Deployment') {
-  // Check with Jeff, should be an API call to move files and restart
   build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
 }
 
@@ -144,5 +143,4 @@ stage('Parade Deployment') {
   node {
     build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}")]
   }
-}
-*/
+} 
