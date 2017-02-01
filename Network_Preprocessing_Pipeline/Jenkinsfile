@@ -131,9 +131,9 @@ stage('Trace/Crystal/Navigator Deployment') {
     parallel 'Trace Deployment':{
       build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
     }, 'Crystal Deployment':{
-      build job: 'Crystal Server', parameters: [string(name: 'City', value: "${City}")]
+      //build job: 'Crystal Server', parameters: [string(name: 'City', value: "${City}")]
     }, 'Navigator Deployment':{
-      build job: 'Navigator Server', parameters: [string(name: 'City', value: "${City}")]
+      //build job: 'Navigator Server', parameters: [string(name: 'City', value: "${City}")]
     }
 
     sleep time: 5, unit: 'MINUTES'
@@ -141,6 +141,6 @@ stage('Trace/Crystal/Navigator Deployment') {
 }
 stage('Parade Deployment') {
   node {
-    build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}")]
+    //build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}")]
   }
-} 
+}
