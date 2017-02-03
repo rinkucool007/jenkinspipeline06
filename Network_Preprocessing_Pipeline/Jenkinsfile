@@ -113,15 +113,20 @@ stage('Archive results') {
   node {
     sh """#!/bin/bash -l
     zip -r output.zip output
-    mkdir ${WORKSPACE}/${City}/${BUILD_NUMBER}
+    mkdir -p ${WORKSPACE}/${City}/${BUILD_NUMBER}
     cp output.zip ${WORKSPACE}/${City}/${BUILD_NUMBER}
     """
     archiveArtifacts "output.zip, output/*, output/mandel/*, output/${City}/*"
+    sh "cp ${WORKSPACE}/output/${City}/links_wkt.csv ${WORKSPACE}/../../FFS\ Server/workspace/preprocessingArtifacts/output/${City}/"
   }
 }
 
 stage('FFS Deployment') {
-  build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
+  if(${City}.compareTo("elpaso_juarez")==0) {
+    build job: 'FFS Server', parameters: [string(name: 'City', value: "elpaso")]
+  } else {
+    build job: 'FFS Server', parameters: [string(name: 'City', value: "${City}")]
+  }
 }
 
 stage('Trace/Crystal/Navigator Deployment') {
@@ -129,11 +134,23 @@ stage('Trace/Crystal/Navigator Deployment') {
     sleep time: 5, unit: 'MINUTES'
 
     parallel 'Trace Deployment':{
-      build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
+      if(${City}.compareTo("elpaso_juarez")==0) {
+        build job: 'Trace Server', parameters: [string(name: 'City', value: "elpaso")]
+      } else {
+        build job: 'Trace Server', parameters: [string(name: 'City', value: "${City}")]
+      }
     }, 'Crystal Deployment':{
-      //build job: 'Crystal Server', parameters: [string(name: 'City', value: "${City}")]
+      if(${City}.compareTo("elpaso_juarez")==0) {
+        build job: 'Crystal Server', parameters: [string(name: 'City', value: "elpaso")]
+      } else {
+        build job: 'Crystal Server', parameters: [string(name: 'City', value: "${City}")]
+      }
     }, 'Navigator Deployment':{
-      //build job: 'Navigator Server', parameters: [string(name: 'City', value: "${City}")]
+      if(${City}.compareTo("elpaso_juarez")==0) {
+        build job: 'Navigator Server', parameters: [string(name: 'City', value: "elpaso")]
+      } else {
+        build job: 'Navigator Server', parameters: [string(name: 'City', value: "${City}")]
+      }
     }
 
     sleep time: 5, unit: 'MINUTES'
@@ -141,6 +158,10 @@ stage('Trace/Crystal/Navigator Deployment') {
 }
 stage('Parade Deployment') {
   node {
-    //build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}")]
+    if(${City}.compareTo("elpaso_juarez")==0) {
+      build job: 'Parade Server', parameters: [string(name: 'City', value: "elpaso")]
+    } else {
+      build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}")]
+    }
   }
 }
