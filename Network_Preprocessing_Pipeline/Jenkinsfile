@@ -117,7 +117,6 @@ stage('Archive results') {
     cp output.zip ${WORKSPACE}/${City}/${BUILD_NUMBER}
     """
     archiveArtifacts "output.zip, output/*, output/mandel/*, output/${City}/*"
-    sh "cp ${WORKSPACE}/output/${City}/links_wkt.csv ${WORKSPACE}/../../FFS\ Server/workspace/preprocessingArtifacts/output/${City}/"
   }
 }
 
