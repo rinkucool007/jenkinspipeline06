@@ -5,8 +5,8 @@ stage('Setup') {
     sh """#!/bin/bash -l
       export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}
       echo ${PYTHONPATH}
-      rm -r ${WORKSPACE}/output
-      mkdir -p ${WORKSPACE}/output
+      rm -rv ${WORKSPACE}/output
+      mkdir -pv ${WORKSPACE}/output
     """
   }
 }
