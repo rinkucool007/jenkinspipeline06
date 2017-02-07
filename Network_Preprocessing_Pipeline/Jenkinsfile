@@ -119,7 +119,7 @@ stage('Archive results') {
     archiveArtifacts "output.zip, output/*, output/mandel/*, output/${City}/*"
   }
 }
-
+/*
 stage('FFS Deployment') {
   if("${City}".compareTo("elpaso_juarez")==0) {
     build job: 'FFS Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
@@ -163,4 +163,4 @@ stage('Parade Deployment') {
       build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
     }
   }
-}
+}*/
