@@ -108,6 +108,14 @@ stage('mandel_preprocessing.py') {
   }
 }
 
+stage('create_gid_tdtr.py') {
+  node {
+    dir('pull_new_network_version') {
+      sh "python create_gid_tdtr.py ${WORKSPACE}/output/ ${City}"
+    }
+  }
+}
+
 // Archive into Jenkins' storage, and into file structure
 stage('Archive results') {
   node {
