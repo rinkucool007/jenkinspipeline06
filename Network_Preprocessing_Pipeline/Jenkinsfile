@@ -4,10 +4,10 @@ stage('Setup') {
   node {
     sh """#!/bin/bash -l
       export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}
-      echo "Removing: "
-      rm -rfv ${WORKSPACE}/output
-      echo "Making directory: "
-      mkdir -pv ${WORKSPACE}/output
+      echo "Removing: ${WORKSPACE}/output"
+      rm -rfv ${WORKSPACE}/output/
+      echo "Making directory: ${WORKSPACE}/output"
+      mkdir -pv ${WORKSPACE}/output/
     """
   }
 }
