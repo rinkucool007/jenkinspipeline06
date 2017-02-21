@@ -1,4 +1,6 @@
 #!groovy
+import java.text.SimpleDateFormat
+
 stage('Setup') {
   echo ("City is: ${City}")
   node {
@@ -87,6 +89,7 @@ stage('topology.py') {
     stash includes: '**/output/**', name: 'topology_files'
   }
   node('windows') {
+    deleteDir()
     unstash 'topology_script'
     unstash 'topology_files'
     dir('topology') {
@@ -126,6 +129,36 @@ stage('Archive results') {
     cp output.zip ${WORKSPACE}/${City}/${BUILD_NUMBER}
     """
     archiveArtifacts "output.zip, output/*, output/mandel/*, output/${City}/*"
+  }
+}
+
+stage('Archive to .97') {
+  node {
+    stash includes: '**/output/**', name: 'entire_output'
+  }
+  node('97') {
+    unstash 'entire_output'
+    // Set date formats for file path on .97
+    def dateFormatYear = new SimpleDateFormat("yyyy")
+    def dateFormatComplete = new SimpleDateFormat("MM-dd-yyyy")
+    def date = new Date()
+    def year=dateFormatYear.format(date)
+    def complete=dateFormatComplete.format(date)
+
+    // Set the city name for file path on .97
+    def cityUpper="Tucson" //Default
+    if("${City}".compareTo("austin")==0) {
+      cityUpper="Austin"
+    } else if("${City}".compareTo("elpaso_juarez")==0) {
+      cityUpper="EP_Juarez"
+    } else if("${City}".compareTo("houston")==0) {
+      cityUpper="Houston"
+    } else if("${City}".compareTo("newyork")==0) {
+      cityUpper="NYC"
+    } else if("${City}".compareTo("tucson")==0) {
+      cityUpper="Tucson"
+    }
+    bat "xcopy /s/e/Y \"c:\\Users\\NLarson\\jenkins\\workspace\\output\\*.*\" \"c:\\Users\\Metropia-9\\Documents\\Network Conversions\\${cityUpper}\\${year}\\Update ${complete}\""
   }
 }
 
