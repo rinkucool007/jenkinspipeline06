@@ -158,7 +158,7 @@ stage('Archive to .97') {
     } else if("${City}".compareTo("tucson")==0) {
       cityUpper="Tucson"
     }
-    bat "xcopy /s/e/Y \"c:\\Users\\NLarson\\jenkins\\workspace\\Network_Pre-processing_Pipeline\\output\\*.*\" \"c:\\Users\\Metropia-9\\Documents\\Network Conversions\\${cityUpper}\\${year}\\Update ${complete}\\\""
+    bat "C:\\Users\\NLarson\\jenkins\\copyOutputAdmin.lnk ${cityUpper} ${year} ${complete}"
   }
 }
 
