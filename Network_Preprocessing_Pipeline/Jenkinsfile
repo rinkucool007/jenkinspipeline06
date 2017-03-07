@@ -75,6 +75,14 @@ stage('create_tdtr.py') {
   }
 }
 
+stage('create_access_limit.py') {
+  node {
+    dir('pull_new_network_version') {
+      sh "python create_access_limit.py ${WORKSPACE}/output/ ${City}"
+    }
+  }
+}
+
 stage('new_turn_restrictions.py') {
   node {
     dir('pull_new_network_version') {
