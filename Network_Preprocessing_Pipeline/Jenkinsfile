@@ -198,6 +198,13 @@ if(params.Deploy_Logic) {
       sleep time: 2, unit: 'MINUTES'
     }
   }
+
+  stage('Mandel Deployment') {
+    node {
+      build job: 'Mandel Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
+    }
+  }
+  
   stage('Parade Deployment') {
     node {
       if("${City}".compareTo("elpaso_juarez")==0) {
