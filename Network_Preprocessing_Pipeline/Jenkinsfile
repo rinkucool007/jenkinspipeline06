@@ -221,10 +221,18 @@ if(params.Deploy_Logic) {
         } else {
           build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         }
-      } else {
+      } else if("${Parade_Version}".compareTo("1.5")==0) {
         if("${City}".compareTo("elpaso_juarez")==0) {
           build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         } else {
+          build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
+        }
+      } else {
+        if("${City}".compareTo("elpaso_juarez")==0) {
+          build job: 'Parade Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
+          build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
+        } else {
+          build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
           build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         }
       }
