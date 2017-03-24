@@ -1,9 +1,10 @@
 #!groovy
 import java.text.SimpleDateFormat
 
+
 stage('Setup') {
   echo ("City is: ${City}")
-  node {
+  node('AWS') {
     sh """#!/bin/bash -l
       export PYTHONPATH=${WORKSPACE}:${PYTHONPATH}
       echo "Removing: ${WORKSPACE}/output"
@@ -15,14 +16,14 @@ stage('Setup') {
 }
 
 stage('Script Checkout') {
-  node {
+  node('AWS') {
     git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
   }
 }
 
 // Start the script sequence
 stage('pull_network.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python pull_network.py ${WORKSPACE}/output/ ${City}"
     }
@@ -30,7 +31,7 @@ stage('pull_network.py') {
 }
 
 stage('nn_angle.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python nn_angle.py ${WORKSPACE}/output/"
     }
@@ -38,7 +39,7 @@ stage('nn_angle.py') {
 }
 
 stage('readnetwork.java') {
-  node {
+  node('AWS') {
     dir('java_programs/readnetwork/readnetwork') {
       sh """#!/bin/bash -l
         javac *.java
@@ -49,7 +50,7 @@ stage('readnetwork.java') {
 }
 
 stage('wkt.java') {
-  node {
+  node('AWS') {
     dir('java_programs/wkt/wkt') {
       sh """#!/bin/bash -l
         javac *.java
@@ -60,7 +61,7 @@ stage('wkt.java') {
 }
 
 stage('build_zone_table.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python build_zone_table.py ${WORKSPACE}/output/ ${City}"
     }
@@ -68,7 +69,7 @@ stage('build_zone_table.py') {
 }
 
 stage('create_tdtr.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python create_tdtr.py ${WORKSPACE}/output/ ${City}"
     }
@@ -76,7 +77,7 @@ stage('create_tdtr.py') {
 }
 
 stage('create_access_limit.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python create_access_limit.py ${WORKSPACE}/output/ ${City}"
     }
@@ -84,7 +85,7 @@ stage('create_access_limit.py') {
 }
 
 stage('new_turn_restrictions.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python new_turn_restrictions.py ${WORKSPACE}/output/ ${City}"
     }
@@ -92,7 +93,7 @@ stage('new_turn_restrictions.py') {
 }
 
 stage('topology.py') {
-  node{
+  node('AWS') {
     stash includes: '**/topology/*', name: 'topology_script'
     stash includes: '**/output/**', name: 'topology_files'
   }
@@ -105,7 +106,7 @@ stage('topology.py') {
     }
     stash includes: '**/output/**', name: 'topology_slave'
   }
-  node {
+  node('AWS') {
     dir("${WORKSPACE}") {
       unstash 'topology_slave'
     }
@@ -113,7 +114,7 @@ stage('topology.py') {
 }
 
 stage('mandel_preprocessing.py') {
-  node {
+  node('AWS') {
     dir('mandel_preprocessing') {
       sh "python preprocessing.py ${WORKSPACE}/output/ ${City}"
     }
@@ -121,7 +122,7 @@ stage('mandel_preprocessing.py') {
 }
 
 stage('create_gid_tdtr.py') {
-  node {
+  node('AWS') {
     dir('pull_new_network_version') {
       sh "python create_gid_tdtr.py ${WORKSPACE}/output/ ${City}"
     }
@@ -130,7 +131,7 @@ stage('create_gid_tdtr.py') {
 
 // Archive into Jenkins' storage, and into file structure
 stage('Archive results') {
-  node {
+  node('AWS') {
     sh """#!/bin/bash -l
     zip -r output.zip output
     mkdir -p ${WORKSPACE}/${City}/${BUILD_NUMBER}
@@ -141,7 +142,7 @@ stage('Archive results') {
 }
 
 stage('Archive to .97') {
-  node {
+  node('AWS') {
     stash includes: '**/output/**', name: 'entire_output'
   }
   node('97') {
@@ -180,7 +181,7 @@ if(params.Deploy_Logic) {
   }
 
   stage('Trace/Crystal/Navigator Deployment') {
-    node {
+    node('AWS') {
       sleep time: 2, unit: 'MINUTES'
 
       parallel 'Trace Deployment':{
@@ -208,31 +209,25 @@ if(params.Deploy_Logic) {
   }
 
   stage('Mandel Deployment') {
-    node {
+    node('AWS') {
       build job: 'Mandel Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
     }
   }
 
   stage('Parade Deployment') {
-    node {
-      if("${Parade_Version}".compareTo("1.0")==0) {
+    node('AWS') {
+      if("${Parade_Version}".compareTo("1.0")==0 || "${Parade_Version}".compareTo("Both")==0) {
         if("${City}".compareTo("elpaso_juarez")==0) {
           build job: 'Parade Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         } else {
           build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         }
-      } else if("${Parade_Version}".compareTo("1.5")==0) {
+      }
+      
+      if("${Parade_Version}".compareTo("1.5")==0 || "${Parade_Version}".compareTo("Both")==0) {
         if("${City}".compareTo("elpaso_juarez")==0) {
           build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         } else {
-          build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
-        }
-      } else {
-        if("${City}".compareTo("elpaso_juarez")==0) {
-          build job: 'Parade Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
-          build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
-        } else {
-          build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
           build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         }
       }
