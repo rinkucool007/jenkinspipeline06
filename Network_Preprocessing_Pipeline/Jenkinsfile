@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 
 stage('Script Checkout') {
   node('AWS') {
-    //git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
+    git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
   }
 }
 
