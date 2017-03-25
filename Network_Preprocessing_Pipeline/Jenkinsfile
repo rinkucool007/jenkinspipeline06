@@ -2,6 +2,12 @@
 import java.text.SimpleDateFormat
 
 
+stage('Script Checkout') {
+  node('AWS') {
+    git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
+  }
+}
+
 stage('Setup') {
   echo ("City is: ${City}")
   node('AWS') {
@@ -12,12 +18,6 @@ stage('Setup') {
       echo "Making directory: ${WORKSPACE}/output"
       mkdir -pv ${WORKSPACE}/output/
     """
-  }
-}
-
-stage('Script Checkout') {
-  node('AWS') {
-    git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
   }
 }
 
@@ -223,7 +223,7 @@ if(params.Deploy_Logic) {
           build job: 'Parade Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
         }
       }
-      
+
       if("${Parade_Version}".compareTo("1.5")==0 || "${Parade_Version}".compareTo("Both")==0) {
         if("${City}".compareTo("elpaso_juarez")==0) {
           build job: 'Parade 1.5 Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
