@@ -210,7 +210,7 @@ if(params.Deploy_Logic) {
 
   stage('Mandel Deployment') {
     node('AWS') {
-      build job: 'Mandel Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
+      build job: 'Mandel_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}")]
     }
   }
 
