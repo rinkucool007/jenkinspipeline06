@@ -1,6 +1,6 @@
 #!groovy
 
-stage('FFS Deployment') {}
+stage('FFS Deployment') {
   if("${City}".compareTo("elpaso_juarez")==0) {
     build job: 'FFS_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Env', value: "${Env}")]
   } else {
