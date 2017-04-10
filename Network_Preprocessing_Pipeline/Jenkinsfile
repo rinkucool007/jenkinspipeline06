@@ -22,79 +22,38 @@ stage('Setup') {
   }
 }
 
-// Start the script sequence
-stage('pull_network.py') {
+stage('Network Processing Scripts') {
   node('AWS') {
     dir('pull_new_network_version') {
       sh "python pull_network.py ${WORKSPACE}/output/ ${City}"
-    }
-  }
-}
-
-stage('nn_angle.py') {
-  node('AWS') {
-    dir('pull_new_network_version') {
+      echo 'Finished pull_network.py'
       sh "python nn_angle.py ${WORKSPACE}/output/"
+      echo 'Finished nn_angle.py'
     }
-  }
-}
-
-stage('readnetwork.java') {
-  node('AWS') {
     dir('java_programs/readnetwork/readnetwork') {
       sh """#!/bin/bash -l
         javac *.java
         java -cp .. readnetwork/Main ${WORKSPACE}/output/
       """
+      echo 'Finished readnetwork.java'
     }
-  }
-}
-
-stage('wkt.java') {
-  node('AWS') {
     dir('java_programs/wkt/wkt') {
       sh """#!/bin/bash -l
         javac *.java
         java -cp .. wkt/ObjectMain ${WORKSPACE}/output/ ${City}
       """
+      echo 'Finished wkt.java'
     }
-  }
-}
-
-stage('build_zone_table.py') {
-  node('AWS') {
     dir('pull_new_network_version') {
       sh "python build_zone_table.py ${WORKSPACE}/output/ ${City}"
-    }
-  }
-}
-
-stage('create_tdtr.py') {
-  node('AWS') {
-    dir('pull_new_network_version') {
+      echo 'Finished build_zone_table.py'
       sh "python create_tdtr.py ${WORKSPACE}/output/ ${City}"
-    }
-  }
-}
-
-stage('create_access_limit.py') {
-  node('AWS') {
-    dir('pull_new_network_version') {
+      echo 'Finished create_tdtr.py'
       sh "python create_access_limit.py ${WORKSPACE}/output/ ${City}"
-    }
-  }
-}
-
-stage('new_turn_restrictions.py') {
-  node('AWS') {
-    dir('pull_new_network_version') {
+      echo 'Finished create_access_limit.py'
       sh "python new_turn_restrictions.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished new_turn_restrictions.py'
     }
-  }
-}
-
-stage('topology.py') {
-  node('AWS') {
     stash includes: '**/topology/*', name: 'topology_script'
     stash includes: '**/output/**', name: 'topology_files'
   }
@@ -110,23 +69,19 @@ stage('topology.py') {
   node('AWS') {
     dir("${WORKSPACE}") {
       unstash 'topology_slave'
+      echo 'Finished topology.py'
     }
-  }
-}
-
-stage('mandel_preprocessing.py') {
-  node('AWS') {
     dir('mandel_preprocessing') {
       sh "python preprocessing.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished preprocessing.py'
     }
-  }
-}
-
-stage('create_gid_tdtr.py') {
-  node('AWS') {
     dir('pull_new_network_version') {
       sh "python create_gid_tdtr.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished create_gid_tdtr.py'
     }
+    echo '~~~'
+    echo 'Initial script sequence is complete'
+    echo '~~~'
   }
 }
 
