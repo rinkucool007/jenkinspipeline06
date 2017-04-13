@@ -10,7 +10,7 @@ stage('FFS Deployment') {
 
 stage('Trace/Crystal/Navigator Deployment') {
   node('AWS') {
-    sleep time: 2, unit: 'MINUTES'
+    sleep 30
 
     parallel 'Trace Deployment':{
       if("${City}".compareTo("elpaso_juarez")==0) {
@@ -32,7 +32,7 @@ stage('Trace/Crystal/Navigator Deployment') {
       }
     }
 
-    sleep time: 2, unit: 'MINUTES'
+    sleep 30
   }
 }
 
