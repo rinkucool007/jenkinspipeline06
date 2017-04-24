@@ -129,11 +129,7 @@ stage('Archive to .97') {
 
 if(params.Deploy_Logic) {
   stage('FFS Deployment') {
-    if("${City}".compareTo("elpaso_juarez")==0) {
-      build job: 'FFS_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-    } else {
-      build job: 'FFS_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-    }
+    build job: 'FFS_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
   }
 
   stage('Trace/Crystal/Navigator Deployment') {
@@ -141,23 +137,11 @@ if(params.Deploy_Logic) {
       sleep 30
 
       parallel 'Trace Deployment':{
-        if("${City}".compareTo("elpaso_juarez")==0) {
-          build job: 'Trace_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-        } else {
-          build job: 'Trace_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-        }
+        build job: 'Trace_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }, 'Crystal Deployment':{
-        if("${City}".compareTo("elpaso_juarez")==0) {
-          build job: 'Crystal_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-        } else {
-          build job: 'Crystal_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-        }
+        build job: 'Crystal_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }, 'Navigator Deployment':{
-        if("${City}".compareTo("elpaso_juarez")==0) {
-          build job: 'Navigator_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-        } else {
-          build job: 'Navigator_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-        }
+        build job: 'Navigator_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }
 
       sleep 30
@@ -182,19 +166,11 @@ if(params.Deploy_Logic) {
     node('AWS') {
       parallel 'Parade 1.0 Deployment':{
         if("${Parade_Version}".compareTo("1.0")==0 || "${Parade_Version}".compareTo("All")==0) {
-          if("${City}".compareTo("elpaso_juarez")==0) {
-            build job: 'Parade_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-          } else {
-            build job: 'Parade_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-          }
+          build job: 'Parade_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
         }
       }, 'Parade 1.5.1 Deployment': {
-      if("${Parade_Version}".compareTo("1.5.1")==0 || "${Parade_Version}".compareTo("All")==0) {
-          if("${City}".compareTo("elpaso_juarez")==0) {
-            build job: 'Parade_1.5_Server', parameters: [string(name: 'City', value: "elpaso"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-          } else {
-            build job: 'Parade_1.5_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
-          }
+        if("${Parade_Version}".compareTo("1.5.1")==0 || "${Parade_Version}".compareTo("All")==0) {
+          build job: 'Parade_1.5_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
         }
       }
     }
