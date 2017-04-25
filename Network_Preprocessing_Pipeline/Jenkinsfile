@@ -5,6 +5,33 @@ import java.text.SimpleDateFormat
 stage('Script Checkout') {
   node('AWS') {
     git credentialsId: '102eded7-0eea-44de-b457-efb71884c99a', url: 'git@bitbucket.org:calmagchiu/network-conversion-programs.git'
+
+    echo "Check that all scripts have been pulled from bitbucket"
+    if(!fileExists('pull_new_network_version/pull_network.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/nn_angle.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('java_programs/readnetwork/readnetwork/Main.java')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('java_programs/wkt/wkt/ObjectMain.java')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/build_zone_table.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/create_tdtr.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/create_access_limit.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/new_turn_restrictions.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('topology/topology.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('mandel_preprocessing/preprocessing.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/create_gid_tdtr.py')) {
+      error('Git failure: partial pull')
+    } else {
+      echo "All files were pulled successfully"
+    }
   }
 }
 
