@@ -1,0 +1,87 @@
+#!groovy
+
+int rollbackNum = "${RollbackFrom}" as Integer
+
+stage('Setup') {
+  node('AWS') {
+    echo "Rolling back from stage ${RollbackFrom}"
+  }
+}
+
+stage('Mandel Deploy Stage 2') {
+  node('AWS') {
+    if(rollbackNum >= 7) {
+      // Rollback Mandel stage 2
+    } else {
+      echo 'Skipping this rollback because of given RollbackFrom value'
+    }
+  }
+}
+
+stage('Trace Deploy Stage 2') {
+  node('AWS') {
+    if(rollbackNum >= 6) {
+      // Rollback Trace stage 2
+    } else {
+      echo 'Skipping this rollback because of given RollbackFrom value'
+    }
+  }
+}
+
+stage('Dynamob Deployment') {
+  node('master') {
+    if(rollbackNum >= 5) {
+      // Rollback Dynamob
+    } else {
+      echo 'Skipping this rollback because of given RollbackFrom value'
+    }
+  }
+}
+
+stage('Parade 1.0/1.5.1 Deployment') {
+  node('AWS') {
+    if(rollbackNum >= 4) {
+      // parallel
+      // -> Rollback parade 1.0
+      // -> Rollback parade 1.5.1
+    } else {
+      echo 'Skipping this rollback because of given RollbackFrom value'
+    }
+  }
+}
+
+stage('Mandel/WaitTimeModel/Map Matching Deployment') {
+  node('AWS') {
+    if(rollbackNum >= 3) {
+      // parallel
+      // -> Rollback Mandel Stage 1
+      // -> Rollback WaitTimeModel
+      // -> Rollback Map Matching Deployment
+    } else {
+      echo 'Skipping this rollback because of the given RollbackFrom value'
+    }
+  }
+}
+
+stage('Trace/Crystal/Navigator Deployment') {
+  node('AWS') {
+    if(rollbackNum >= 2) {
+      // parallel
+      // -> Rollback Trace Stage 1
+      // -> Rollback Crystal
+      // -> Rollback Navigator
+    } else {
+      echo 'Skipping this rollback because of the given RollbackFrom value'
+    }
+  }
+}
+
+stage('FFS Deployment') {
+  node('AWS') {
+    if(rollbackNum >= 1) {
+      // Rollback FFS
+    } else {
+      echo 'Skipping this rollback because of the given RollbackFrom value'
+    }
+  }
+}
