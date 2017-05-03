@@ -150,7 +150,7 @@ stage('Archive to .97') {
     } else if("${City}".compareTo("tucson")==0) {
       cityUpper="Tucson"
     }
-    bat "C:\\Users\\NLarson\\jenkins\\copyOutputAdmin.lnk ${cityUpper} ${year} ${complete}"
+    bat "C:\\Users\\NLarson\\jenkins\\copyOutput.bat ${cityUpper} ${year} ${complete}"
   }
 }
 
