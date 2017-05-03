@@ -209,9 +209,14 @@ if(params.Deploy_Logic) {
     }
   }
 
-  stage('Post Trace/Mandel Deployment') {
+  stage('Trace Deployment Stage 2') {
     node('AWS') {
       build job: 'Trace_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
+    }
+  }
+
+  stage('Mandel Deployment Stage 2') {
+    node('AWS') {
       build job: 'Mandel_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
     }
   }
