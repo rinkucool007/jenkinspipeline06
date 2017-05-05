@@ -67,9 +67,9 @@ stage('Trace/Crystal/Navigator Deployment') {
   node('AWS') {
     if(rollbackNum >= 2) {
       parallel 'Trace Deployment':{
-        // Rollback trace stage 1
+        build job: 'Trace_Rollback_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "1")]
       }, 'Crystal Deployment':{
-        // Rollback Crystal
+        build job: 'Crystal_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }, 'Navigator Deployment':{
         // Rollback Navigator
       }
