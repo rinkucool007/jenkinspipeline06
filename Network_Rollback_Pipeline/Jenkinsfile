@@ -1,6 +1,7 @@
 #!groovy
 
 int rollbackNum = "${RollbackFrom}" as Integer
+boolean pulledFrom97 = false
 
 stage('Setup') {
   node('AWS') {
@@ -9,9 +10,15 @@ stage('Setup') {
 }
 
 stage('Mandel Deploy Stage 2') {
+  node('97') {
+    if(!pulledFrom97) {
+      // TODO: Pull files from .97 and stash for this build
+      pulledFrom97 = true
+    }
+  }
   node('AWS') {
     if(rollbackNum >= 7) {
-      // Rollback Mandel stage 2
+      // TODO: Need to pull from .97 to get backup files
     } else {
       echo 'Skipping this rollback because of given RollbackFrom value'
     }
@@ -21,7 +28,7 @@ stage('Mandel Deploy Stage 2') {
 stage('Trace Deploy Stage 2') {
   node('AWS') {
     if(rollbackNum >= 6) {
-      // Rollback Trace stage 2
+      build job: 'Trace_Rollback_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
     } else {
       echo 'Skipping this rollback because of given RollbackFrom value'
     }
@@ -29,9 +36,15 @@ stage('Trace Deploy Stage 2') {
 }
 
 stage('Dynamob Deployment') {
+  node('97') {
+    if(!pulledFrom97) {
+      // TODO: Pull files from .97 and stash for this build
+      pulledFrom97 = true
+    }
+  }
   node('master') {
     if(rollbackNum >= 5) {
-      // Rollback Dynamob
+      // TODO: Need to pull from .97 to get backup files
     } else {
       echo 'Skipping this rollback because of given RollbackFrom value'
     }
@@ -39,11 +52,23 @@ stage('Dynamob Deployment') {
 }
 
 stage('Parade 1.0/1.5.1 Deployment') {
+  node('97') {
+    if(!pulledFrom97) {
+      // TODO: Pull files from .97 and stash for this build
+      pulledFrom97 = true
+    }
+  }
   node('AWS') {
     if(rollbackNum >= 4) {
-      // parallel
-      // -> Rollback parade 1.0
-      // -> Rollback parade 1.5.1
+      parallel 'Parade 1.0 Deployment':{
+        if("${Parade_Version}".compareTo("1.0")==0 || "${Parade_Version}".compareTo("All")==0) {
+          build job: 'Parade_1.0_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
+        }
+      }, 'Parade 1.5.1 Deployment': {
+        if("${Parade_Version}".compareTo("1.5.1")==0 || "${Parade_Version}".compareTo("All")==0) {
+          // TODO: Need to pull from 97 to get backup files
+        }
+      }
     } else {
       echo 'Skipping this rollback because of given RollbackFrom value'
     }
@@ -51,12 +76,23 @@ stage('Parade 1.0/1.5.1 Deployment') {
 }
 
 stage('Mandel/WaitTimeModel/Map Matching Deployment') {
+  node('97') {
+    if(!pulledFrom97) {
+      // TODO: Pull files from .97 and stash for this build
+      pulledFrom97 = true
+    }
+  }
   node('AWS') {
     if(rollbackNum >= 3) {
-      // parallel
-      // -> Rollback Mandel Stage 1
-      // -> Rollback WaitTimeModel
-      // -> Rollback Map Matching Deployment
+      parallel 'Mandel Deployment': {
+        // TODO: Need to pull from .97 to get backup files
+      }, 'WaitTimeModel Deployment': {
+        if("${City}".compareTo("elpaso_juarez")==0) {
+          // TODO: Need to pull from .97 to get backup files
+        }
+      }, 'Map Matching Deployment': {
+        // TODO: Need to pull from .97 to get backup files
+      }
     } else {
       echo 'Skipping this rollback because of the given RollbackFrom value'
     }
@@ -71,7 +107,7 @@ stage('Trace/Crystal/Navigator Deployment') {
       }, 'Crystal Deployment':{
         build job: 'Crystal_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }, 'Navigator Deployment':{
-        // Rollback Navigator
+        build job: 'Navigator_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }
     } else {
       echo 'Skipping this rollback because of the given RollbackFrom value'
