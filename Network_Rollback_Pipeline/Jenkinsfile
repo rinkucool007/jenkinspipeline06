@@ -1,21 +1,35 @@
 #!groovy
 
 int rollbackNum = "${RollbackFrom}" as Integer
-boolean pulledFrom97 = false
 
 stage('Setup') {
   node('AWS') {
     echo "Rolling back from stage ${RollbackFrom}"
   }
+  node('97') {
+    if(rollbackNum >= 3) {
+      // Set the city name for file path on .97
+      def cityUpper="Tucson" //Default
+      if("${City}".compareTo("austin")==0) {
+        cityUpper="Austin"
+      } else if("${City}".compareTo("elpaso_juarez")==0) {
+        cityUpper="EP_Juarez"
+      } else if("${City}".compareTo("houston")==0) {
+        cityUpper="Houston"
+      } else if("${City}".compareTo("newyork")==0) {
+        cityUpper="NYC"
+      } else if("${City}".compareTo("tucson")==0) {
+        cityUpper="Tucson"
+      }
+
+      // Pull the most recent backup-1 to get the files for the given city
+      bat "C:\\Users\\NLarson\\jenkins\\copyBackup.bat ${cityUpper}"
+      //stash includes: "INSERT_FILE_IDENTIFIER", name: 'backup_files'
+    }
+  }
 }
 
 stage('Mandel Deploy Stage 2') {
-  node('97') {
-    if(!pulledFrom97) {
-      // TODO: Pull files from .97 and stash for this build
-      pulledFrom97 = true
-    }
-  }
   node('AWS') {
     if(rollbackNum >= 7) {
       // TODO: Need to pull from .97 to get backup files
@@ -36,12 +50,6 @@ stage('Trace Deploy Stage 2') {
 }
 
 stage('Dynamob Deployment') {
-  node('97') {
-    if(!pulledFrom97) {
-      // TODO: Pull files from .97 and stash for this build
-      pulledFrom97 = true
-    }
-  }
   node('master') {
     if(rollbackNum >= 5) {
       // TODO: Need to pull from .97 to get backup files
@@ -52,12 +60,6 @@ stage('Dynamob Deployment') {
 }
 
 stage('Parade 1.0/1.5.1 Deployment') {
-  node('97') {
-    if(!pulledFrom97) {
-      // TODO: Pull files from .97 and stash for this build
-      pulledFrom97 = true
-    }
-  }
   node('AWS') {
     if(rollbackNum >= 4) {
       parallel 'Parade 1.0 Deployment':{
@@ -76,12 +78,6 @@ stage('Parade 1.0/1.5.1 Deployment') {
 }
 
 stage('Mandel/WaitTimeModel/Map Matching Deployment') {
-  node('97') {
-    if(!pulledFrom97) {
-      // TODO: Pull files from .97 and stash for this build
-      pulledFrom97 = true
-    }
-  }
   node('AWS') {
     if(rollbackNum >= 3) {
       parallel 'Mandel Deployment': {
