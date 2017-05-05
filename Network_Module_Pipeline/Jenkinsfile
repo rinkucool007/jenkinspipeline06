@@ -9,7 +9,7 @@ stage('Trace/Crystal/Navigator Deployment') {
     sleep 30
 
     parallel 'Trace Deployment':{
-      build job: 'Trace_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "1")]
+      build job: 'Trace_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "1")]
     }, 'Crystal Deployment':{
       build job: 'Crystal_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
     }, 'Navigator Deployment':{
@@ -23,7 +23,7 @@ stage('Trace/Crystal/Navigator Deployment') {
 stage('Mandel/WaitTimeModel/Map Matching Deployment') {
   node('AWS') {
     parallel 'Mandel Deployment': {
-      build job: 'Mandel_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "1")]
+      build job: 'Mandel_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "1")]
     }, 'WaitTimeModel Deployment': {
       if("${City}".compareTo("elpaso_juarez")==0) {
         build job: 'WaitTimeModel_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
@@ -56,12 +56,12 @@ stage('Dynamob Deployment') {
 
 stage('Trace Deployment Stage 2') {
   node('AWS') {
-    build job: 'Trace_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
+    build job: 'Trace_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
   }
 }
 
 stage('Mandel Deployment Stage 2') {
   node('AWS') {
-    build job: 'Mandel_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${BUILD_NUMBER}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
+    build job: 'Mandel_Server_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
   }
 }
