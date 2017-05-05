@@ -66,10 +66,13 @@ stage('Mandel/WaitTimeModel/Map Matching Deployment') {
 stage('Trace/Crystal/Navigator Deployment') {
   node('AWS') {
     if(rollbackNum >= 2) {
-      // parallel
-      // -> Rollback Trace Stage 1
-      // -> Rollback Crystal
-      // -> Rollback Navigator
+      parallel 'Trace Deployment':{
+        // Rollback trace stage 1
+      }, 'Crystal Deployment':{
+        // Rollback Crystal
+      }, 'Navigator Deployment':{
+        // Rollback Navigator
+      }
     } else {
       echo 'Skipping this rollback because of the given RollbackFrom value'
     }
@@ -79,7 +82,7 @@ stage('Trace/Crystal/Navigator Deployment') {
 stage('FFS Deployment') {
   node('AWS') {
     if(rollbackNum >= 1) {
-      // Rollback FFS
+      build job: 'FFS_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
     } else {
       echo 'Skipping this rollback because of the given RollbackFrom value'
     }
