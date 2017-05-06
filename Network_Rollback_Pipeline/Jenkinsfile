@@ -24,8 +24,11 @@ stage('Setup') {
 
       // Pull the most recent backup-1 to get the files for the given city
       bat "C:\\Users\\NLarson\\jenkins\\copyBackup.bat ${cityUpper}"
-      //stash includes: "INSERT_FILE_IDENTIFIER", name: 'backup_files'
+      stash includes: "**/currentBackup/**", name: 'backup_files'
     }
+  }
+  node('AWS') {
+    unstash 'backup_files'
   }
 }
 
