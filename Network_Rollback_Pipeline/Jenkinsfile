@@ -22,7 +22,7 @@ stage('Setup') {
         cityUpper="Tucson"
       }
 
-      // Pull the most recent backup-1 to get the files for the given city
+      // Pull the most recent backup-minus-1 to get the files for the given city
       bat "C:\\Users\\NLarson\\jenkins\\copyBackup.bat ${cityUpper}"
       stash includes: "**/currentBackup/**", name: 'backup_files'
     }
@@ -35,7 +35,9 @@ stage('Setup') {
 stage('Mandel Deploy Stage 2') {
   node('AWS') {
     if(rollbackNum >= 7) {
-      // TODO: Need to pull from .97 to get backup files
+      sh "mkdir -p '${WORKSPACE}/../Mandel_Rollback_Staged/currentBackup'"
+      sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../Mandel_Rollback_Staged/currentBackup"
+      build job: 'Mandel_Rollback_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "2")]
     } else {
       echo 'Skipping this rollback because of given RollbackFrom value'
     }
@@ -55,7 +57,9 @@ stage('Trace Deploy Stage 2') {
 stage('Dynamob Deployment') {
   node('master') {
     if(rollbackNum >= 5) {
-      // TODO: Need to pull from .97 to get backup files
+      sh "mkdir -p '${WORKSPACE}/../Dynamob_Rollback/currentBackup'"
+      sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../Dynamob_Rollback/currentBackup"
+      build job: 'Dynamob_Rollback', parameters: [string(name: 'City', value: "${City}")]
     } else {
       echo 'Skipping this rollback because of given RollbackFrom value'
     }
@@ -71,7 +75,9 @@ stage('Parade 1.0/1.5.1 Deployment') {
         }
       }, 'Parade 1.5.1 Deployment': {
         if("${Parade_Version}".compareTo("1.5.1")==0 || "${Parade_Version}".compareTo("All")==0) {
-          // TODO: Need to pull from 97 to get backup files
+          sh "mkdir -p '${WORKSPACE}/../Parade_1.5_Rollback/currentBackup'"
+          sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../Parade_1.5_Rollback/currentBackup"
+          build job: 'Parade_1.5_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
         }
       }
     } else {
@@ -84,13 +90,21 @@ stage('Mandel/WaitTimeModel/Map Matching Deployment') {
   node('AWS') {
     if(rollbackNum >= 3) {
       parallel 'Mandel Deployment': {
-        // TODO: Need to pull from .97 to get backup files
+        sh "mkdir -p '${WORKSPACE}/../Mandel_Rollback_Staged/currentBackup'"
+        sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../Mandel_Rollback_Staged/currentBackup"
+        build job: 'Mandel_Rollback_Staged', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Stage', value: "1")]
       }, 'WaitTimeModel Deployment': {
         if("${City}".compareTo("elpaso_juarez")==0) {
-          // TODO: Need to pull from .97 to get backup files
+          // TODO: Need to create the job on Jenkins
+          sh "mkdir -p '${WORKSPACE}/../WaitTimeModel_Rollback/currentBackup'"
+          sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../WaitTimeModel_Rollback/currentBackup"
+
         }
       }, 'Map Matching Deployment': {
-        // TODO: Need to pull from .97 to get backup files
+        // TODO: Need to create the job on Jenkins
+        sh "mkdir '${WORKSPACE}/../Map_Matching_Rollback/currentBackup'"
+        sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../Map_Matching_Rollback/currentBackup"
+
       }
     } else {
       echo 'Skipping this rollback because of the given RollbackFrom value'
