@@ -98,13 +98,13 @@ stage('Mandel/WaitTimeModel/Map Matching Deployment') {
           // TODO: Need to create the job on Jenkins
           sh "mkdir -p '${WORKSPACE}/../WaitTimeModel_Rollback/currentBackup'"
           sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../WaitTimeModel_Rollback/currentBackup"
-
+          build job: 'WaitTimeModel_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
         }
       }, 'Map Matching Deployment': {
         // TODO: Need to create the job on Jenkins
         sh "mkdir '${WORKSPACE}/../Map_Matching_Rollback/currentBackup'"
         sh "cp -r ${WORKSPACE}/currentBackup ${WORKSPACE}/../Map_Matching_Rollback/currentBackup"
-
+        build job: 'Map_Matching_Rollback', parameters: [string(name: 'City', value: "${City}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
       }
     } else {
       echo 'Skipping this rollback because of the given RollbackFrom value'
