@@ -80,6 +80,8 @@ stage('Network Processing Scripts') {
       echo 'Finished create_access_limit.py'
       sh "python new_turn_restrictions.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished new_turn_restrictions.py'
+      sh "python extradata_for_parade.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished extradata_for_parade.py'
     }
     stash includes: '**/topology/*', name: 'topology_script'
     stash includes: '**/output/**', name: 'topology_files'
