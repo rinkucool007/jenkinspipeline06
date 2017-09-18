@@ -1,4 +1,4 @@
-#!groovy
+#!groovy preprocssing
 import java.text.SimpleDateFormat
 
 
@@ -207,7 +207,7 @@ if(params.Deploy_Logic) {
 
  stage('Network_DB_Deployment') {
   node('AWS') {
-    build job: 'Network_DB_Deployment', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Description', value: "${Description}")]
+    build job: 'Network_DB_Deployment', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}"), string(name: 'Network_Version', value: "${Network_Version}"), string(name: 'Description', value: "${Description}")]
   }
 }
  
