@@ -29,6 +29,12 @@ stage('Script Checkout') {
       error('Git failure: partial pull')
     } else if(!fileExists('pull_new_network_version/create_gid_tdtr.py')) {
       error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/waittime_network_links.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('trace_quadtree/pyqtree.py')) {
+      error('Git failure: partial pull')
+    } else if(!fileExists('trace_quadtree/split_network.py')) {
+      error('Git failure: partial pull')
     } else {
       echo "All files were pulled successfully"
     }
@@ -82,6 +88,10 @@ stage('Network Processing Scripts') {
       echo 'Finished new_turn_restrictions.py'
       sh "python extradata_for_parade.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished extradata_for_parade.py'
+      sh "python waittime_network_links.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished waittime_network_links.py'
+      sh "python split_network.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished split_network.py'
     }
     stash includes: '**/topology/*', name: 'topology_script'
     stash includes: '**/output/**', name: 'topology_files'
