@@ -90,7 +90,8 @@ stage('Network Processing Scripts') {
       echo 'Finished new_turn_restrictions.py'
       sh "python extradata_for_parade.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished extradata_for_parade.py'
-      sh "python waittime_network_links.py ${WORKSPACE}/output/ ${City}"
+      sh "sudo mv ref_table.csv ${WORKSPACE}/output/"
+      sh "python waittime_network_links.py sudo mv ${City}"
       echo 'Finished waittime_network_links.py'
       sh "python split_network.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished split_network.py'
