@@ -29,7 +29,7 @@ stage('Script Checkout') {
       error('Git failure: partial pull')
     } else if(!fileExists('pull_new_network_version/create_gid_tdtr.py')) {
       error('Git failure: partial pull')
-    } else if(!fileExists('pull_new_network_version/ref_table.csv')) {           // this file is needed to run waittime_network_links.py
+    } else if(!fileExists('pull_new_network_version/ref_table.csv')) {
       error('Git failure: partial pull')
     } else if(!fileExists('pull_new_network_version/waittime_network_links.py')) {
       error('Git failure: partial pull')
