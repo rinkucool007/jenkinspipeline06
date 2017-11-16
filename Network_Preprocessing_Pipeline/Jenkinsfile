@@ -91,8 +91,10 @@ stage('Network Processing Scripts') {
       sh "python extradata_for_parade.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished extradata_for_parade.py'
       sh "sudo mv ref_table.csv ${WORKSPACE}/output/"
-      sh "python waittime_network_links.py sudo mv ${City}"
+      sh "python waittime_network_links.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished waittime_network_links.py'
+    }
+    dir('trace_quadtree') {
       sh "python split_network.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished split_network.py'
     }
