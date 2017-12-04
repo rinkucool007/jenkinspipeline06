@@ -56,7 +56,7 @@ stage('Network_DB_Deployment') {
 
 stage('Dynamob Deployment') {
   node('master') {
-    build job: 'Dynamob_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}")]
+    build job: 'Dynamob_Server', parameters: [string(name: 'City', value: "${City}"), string(name: 'ARTIFACT_BUILD', value: "${ARTIFACT_BUILD}"), string(name: 'Deploy_Env', value: "${Deploy_Env}")]
   }
 }
 
