@@ -168,6 +168,8 @@ stage('Archive to .97') {
       cityUpper="NYC"
     } else if("${City}".compareTo("tucson")==0) {
       cityUpper="Tucson"
+    } else if("${City}".compareTo("taiwan")==0) {
+      cityUpper="Taiwan"
     }
     bat "C:\\Users\\NLarson\\jenkins\\copyOutput.bat ${cityUpper} ${year} ${complete}"
   }
