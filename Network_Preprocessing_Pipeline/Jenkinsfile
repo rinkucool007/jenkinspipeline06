@@ -33,6 +33,8 @@ stage('Script Checkout') {
       error('Git failure: partial pull')
     } else if(!fileExists('pull_new_network_version/waittime_network_links.py')) {
       error('Git failure: partial pull')
+    } else if(!fileExists('pull_new_network_version/calc_grade.py')) {
+      error('Git failure: partial pull')
     } else if(!fileExists('trace_quadtree/__init__.py')) {
       error('Git failure: partial pull')
     } else if(!fileExists('trace_quadtree/pyqtree.py')) {
@@ -92,6 +94,8 @@ stage('Network Processing Scripts') {
       echo 'Finished new_turn_restrictions.py'
       sh "python extradata_for_parade.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished extradata_for_parade.py'
+      sh "python calc_grade.py ${WORKSPACE}/output/ ${City}"
+      echo 'Finished calc_grade.py'
       sh "sudo mv ref_table.csv ${WORKSPACE}/output/"
       sh "python waittime_network_links.py ${WORKSPACE}/output/ ${City}"
       echo 'Finished waittime_network_links.py'
